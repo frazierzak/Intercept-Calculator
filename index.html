@@ -9,6 +9,10 @@
       href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;900&display=swap"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
   </head>
   <body>
     <div class="container">
@@ -16,11 +20,20 @@
       <div class="form-container">
         <div class="form-wrapper">
           <form id="myForm">
+            <h2>Enter Data</h2>
             <!-- Your form fields go here -->
-            <label for="speed_self">Your Detachment Speed (km/h):</label>
+            <div class="input-wrapper">
+              <i class="fa-solid fa-gauge"></i>
+              <label for="speed_self">Your Detachment Speed (km/h):</label>
+            </div>
+
             <input type="number" id="speed_self" name="speed_self" required />
 
-            <label for="speed_target">Target Speed (km/h):</label>
+            <div class="input-wrapper">
+              <i class="fa-solid fa-gauge"></i>
+              <label for="speed_target">Target Speed (km/h):</label>
+            </div>
+
             <input
               type="number"
               id="speed_target"
@@ -28,9 +41,13 @@
               required
             />
 
-            <label for="direction_target_from_you"
-              >Direction towards Target (°):</label
-            >
+            <div class="input-wrapper">
+              <i class="fa-solid fa-compass"></i>
+              <label for="direction_target_from_you"
+                >Direction towards Target (°):</label
+              >
+            </div>
+
             <input
               type="number"
               id="direction_target_from_you"
@@ -38,7 +55,13 @@
               required
             />
 
-            <label for="direction_target_heading">Target's Heading (°):</label>
+            <div class="input-wrapper">
+              <i class="fa-solid fa-compass"></i>
+              <label for="direction_target_from_you"
+                >Target's Heading (°):</label
+              >
+            </div>
+
             <input
               type="number"
               id="direction_target_heading"
@@ -46,7 +69,12 @@
               required
             />
 
-            <label for="distance_target">Distance to Target (km):</label>
+            <div class="input-wrapper">
+              <i class="fa-solid fa-ruler"></i>
+              <label for="direction_target_from_you"
+                >Distnace to target (km):</label
+              >
+            </div>
             <input
               type="number"
               id="distance_target"
@@ -54,8 +82,10 @@
               required
             />
 
-            <input type="submit" value="Calculate" />
-            <input type="reset" value="Clear" />
+            <div class="buttons">
+              <button type="submit" class="submit-button">Run</button>
+              <button type="reset" class="clear-button">Clear</button>
+            </div>
           </form>
         </div>
         <div class="results-wrapper">
@@ -63,7 +93,24 @@
           <div id="resultsContainer"></div>
         </div>
       </div>
-      <h2>How to use</h2>
+      <div class="desc">
+        <h2>
+          <i class="fas fa-lightbulb"></i> How to use
+          <i class="fas fa-lightbulb"></i>
+        </h2>
+
+        <p>Hello, Captain.</p>
+        <p>
+          Seems you've decoded the latest radio message and you're not sure what
+          to do?
+        </p>
+        <p>
+          You know the target's <strong>location</strong> relative to your
+          position, their <strong>heading</strong>, and their
+          <strong>speed</strong>, correct? That's all we need to
+          <strong>INTERCEPT!</strong>
+        </p>
+      </div>
     </div>
 
     <script src="static/script.js"></script>

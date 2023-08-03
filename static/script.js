@@ -22,7 +22,16 @@ function calculateHeading(event) {
     isNaN(direction_target_heading) ||
     isNaN(distance_target)
   ) {
-    alert('All fields are required.')
+    var warningMessage = '<p class="warning">You must fill out all fields</p>'
+    document.getElementById('resultsContainer').innerHTML = warningMessage
+    return
+  }
+
+  // Check if speed_self is greater than speed_target
+  if (speed_self <= speed_target) {
+    var warningMessage =
+      '<p class="warning">Detachment\'s speed must be greater than target\'s speed!</p>'
+    document.getElementById('resultsContainer').innerHTML = warningMessage
     return
   }
 
@@ -75,5 +84,12 @@ function calculateHeading(event) {
     '<p>Time: <span>' + time_to_intercept + ' hrs</span></p>'
 }
 
+function clearResults() {
+  var resultsContainer = document.getElementById('resultsContainer')
+  resultsContainer.innerHTML = ''
+}
+
 // Attach the form submission handler
 document.getElementById('myForm').addEventListener('submit', calculateHeading)
+
+document.getElementById('myForm').addEventListener('reset', clearResults)
