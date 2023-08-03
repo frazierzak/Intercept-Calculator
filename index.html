@@ -26,26 +26,24 @@
               <i class="fa-solid fa-gauge"></i>
               <label for="speed_self">Your Detachment's Speed (km/h):</label>
             </div>
-
             <input
               type="number"
               id="speed_self"
               name="speed_self"
-              placeholder="e.g. 256"
               required
+              step="1"
             />
 
             <div class="input-wrapper">
               <i class="fa-solid fa-gauge"></i>
               <label for="speed_target">Target's Speed (km/h):</label>
             </div>
-
             <input
               type="number"
               id="speed_target"
               name="speed_target"
-              placeholder="e.g. 110"
               required
+              step="1"
             />
 
             <div class="input-wrapper">
@@ -54,40 +52,40 @@
                 >Direction towards Target (°):</label
               >
             </div>
-
             <input
               type="number"
               id="direction_target_from_you"
               name="direction_target_from_you"
-              placeholder="e.g. 157"
               required
+              step="1"
             />
 
             <div class="input-wrapper">
               <i class="fa-solid fa-compass"></i>
-              <label for="direction_target_heading"
+              <label for="direction_target_from_you"
                 >Target's Heading (°):</label
               >
             </div>
-
             <input
               type="number"
               id="direction_target_heading"
               name="direction_target_heading"
-              placeholder="e.g. 59"
               required
+              step="1"
             />
 
             <div class="input-wrapper">
               <i class="fa-solid fa-ruler"></i>
-              <label for="distance_target">Distance to target (km):</label>
+              <label for="direction_target_from_you"
+                >Distance to target (km):</label
+              >
             </div>
             <input
               type="number"
               id="distance_target"
               name="distance_target"
-              placeholder="827"
               required
+              step="1"
             />
 
             <div class="buttons">
