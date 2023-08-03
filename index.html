@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Intercept Course Calculator</title>
+    <link rel="stylesheet" href="static/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <img src="static/images/logo.png" alt="Intercept Calculator" />
+      <div class="form-container">
+        <div class="form-wrapper">
+          <form id="myForm">
+            <!-- Your form fields go here -->
+            <label for="speed_self">Your Detachment Speed (km/h):</label>
+            <input type="number" id="speed_self" name="speed_self" required />
+
+            <label for="speed_target">Target Speed (km/h):</label>
+            <input
+              type="number"
+              id="speed_target"
+              name="speed_target"
+              required
+            />
+
+            <label for="direction_target_from_you"
+              >Direction towards Target (°):</label
+            >
+            <input
+              type="number"
+              id="direction_target_from_you"
+              name="direction_target_from_you"
+              required
+            />
+
+            <label for="direction_target_heading">Target's Heading (°):</label>
+            <input
+              type="number"
+              id="direction_target_heading"
+              name="direction_target_heading"
+              required
+            />
+
+            <label for="distance_target">Distance to Target (km):</label>
+            <input
+              type="number"
+              id="distance_target"
+              name="distance_target"
+              required
+            />
+
+            <input type="submit" value="Calculate" />
+            <input type="reset" value="Clear" />
+          </form>
+        </div>
+        <div class="results-wrapper">
+          <h2>Results:</h2>
+          <div id="resultsContainer"></div>
+        </div>
+      </div>
+      <h2>How to use</h2>
+    </div>
+
+    <script src="static/script.js"></script>
+  </body>
+</html>
