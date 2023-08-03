@@ -1,7 +1,9 @@
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, render_template_string
+from flask_frozen import Freezer
 import math
 
 app = Flask(__name__)
+freezer = Freezer(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def calculate_heading():
@@ -85,5 +87,7 @@ def calculate_heading():
 
     return render_template('form.html')
 
-if __name__ == "__main__":
+if __name__ == '__main__':
+    # Uncomment the following two lines to generate the static site
+    freezer.freeze()
     app.run(debug=True)
