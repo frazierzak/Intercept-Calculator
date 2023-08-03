@@ -20,7 +20,7 @@ body {
 
 .container {
   max-width: 700px;
-  margin: 0 auto;
+  margin: 0 auto 20px auto;
   background-color: #444444ed;
   padding: 20px;
   border-radius: 5px;
@@ -238,4 +238,35 @@ input[type='number'] {
 .desc p {
   margin-bottom: 12px;
   line-height: 36px;
+}
+
+footer {
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
+  max-width: 700px;
+  margin: 0 auto;
+  border-radius: 5px;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-links a {
+  color: #fff;
+  text-decoration: none;
+  margin-right: 20px;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
+
+p {
+  margin: 0;
 }
