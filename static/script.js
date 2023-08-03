@@ -1,8 +1,6 @@
-function calculateHeading(event) {
-  event.preventDefault()
-
-  // Get form values
+function getFormValues() {
   var speed_self = parseFloat(document.getElementById('speed_self').value)
+  var desired_time = parseFloat(document.getElementById('desired_time').value)
   var speed_target = parseFloat(document.getElementById('speed_target').value)
   var direction_target_from_you = parseFloat(
     document.getElementById('direction_target_from_you').value
@@ -14,27 +12,66 @@ function calculateHeading(event) {
     document.getElementById('distance_target').value
   )
 
-  // Check if any input is empty
-  if (
-    isNaN(speed_self) ||
+  return {
+    speed_self,
+    desired_time,
+    speed_target,
+    direction_target_from_you,
+    direction_target_heading,
+    distance_target,
+  }
+}
+
+function displayWarning(message) {
+  document.getElementById(
+    'resultsContainer'
+  ).innerHTML = `<p class="warning">${message}</p>`
+}
+
+function calculateHeading(event) {
+  event.preventDefault()
+
+  // Get form values
+  var {
+    speed_self,
+    desired_time,
+    speed_target,
+    direction_target_from_you,
+    direction_target_heading,
+    distance_target,
+  } = getFormValues()
+
+  // Check for invalid form inputs
+  var bothSelfSpeedAndDesiredTimeFilled =
+    !isNaN(speed_self) && !isNaN(desired_time)
+  var neitherSelfSpeedNorDesiredTimeFilled =
+    isNaN(speed_self) && isNaN(desired_time)
+  var anyRequiredFieldEmpty =
     isNaN(speed_target) ||
     isNaN(direction_target_from_you) ||
     isNaN(direction_target_heading) ||
     isNaN(distance_target)
+
+  if (
+    bothSelfSpeedAndDesiredTimeFilled ||
+    neitherSelfSpeedNorDesiredTimeFilled ||
+    anyRequiredFieldEmpty
   ) {
-    var warningMessage = '<p class="warning">You must fill out all fields</p>'
-    document.getElementById('resultsContainer').innerHTML = warningMessage
-    return
-  }
-
-  // Check if speed_self is greater than speed_target
-  if (speed_self <= speed_target) {
     var warningMessage =
-      '<p class="warning">Detachment\'s speed must be greater than target\'s speed!</p>'
-    document.getElementById('resultsContainer').innerHTML = warningMessage
+      bothSelfSpeedAndDesiredTimeFilled || neitherSelfSpeedNorDesiredTimeFilled
+        ? 'You must fill out either speed_self or desired_time, but not both!'
+        : 'You must fill out all fields'
+    displayWarning(warningMessage)
     return
   }
 
+  // If only speed_self is filled, calculate desired_time. If only desired_time is filled, calculate speed_self.
+  desired_time = isNaN(desired_time)
+    ? distance_target / speed_self
+    : desired_time
+  speed_self = isNaN(speed_self) ? distance_target / desired_time : speed_self
+
+  //Calculations
   // Convert degrees to radians
   var angle_target = (90 - direction_target_from_you) * (Math.PI / 180)
   if (angle_target < 0) {
@@ -47,8 +84,7 @@ function calculateHeading(event) {
   }
 
   // Perform calculations
-  var time_to_target = distance_target / speed_self
-  var distance_moved_target = speed_target * time_to_target
+  var distance_moved_target = speed_target * desired_time
 
   var x_target = distance_target * Math.cos(angle_target)
   var y_target = distance_target * Math.sin(angle_target)
@@ -60,18 +96,18 @@ function calculateHeading(event) {
   var y_final = y_target + y_movement
 
   var distance_final = Math.sqrt(x_final ** 2 + y_final ** 2)
+  var speed_self = distance_final / desired_time // Calculate speed_self using desired_time
+
   var angle_final = Math.atan2(y_final, x_final) * (180 / Math.PI)
   angle_final = 90 - angle_final
   if (angle_final < 0) {
     angle_final += 360
   }
 
-  var time_to_intercept = distance_final / speed_self
-
   // Round the results
+  speed_self = Math.round(speed_self * 10) / 10 // Round the result
   angle_final = Math.round(angle_final)
   distance_final = Math.round(distance_final)
-  time_to_intercept = Math.round(time_to_intercept * 10) / 10
 
   // Update the results container
   var resultsContainer = document.getElementById('resultsContainer')
@@ -81,7 +117,7 @@ function calculateHeading(event) {
   resultsContainer.innerHTML +=
     '<p>Distance: <span>' + distance_final + ' km</span></p>'
   resultsContainer.innerHTML +=
-    '<p>Time: <span>' + time_to_intercept + ' hrs</span></p>'
+    '<p>Speed: <span>' + speed_self + ' km/hr</span></p>' // Show calculated speed_self
 }
 
 function clearResults() {
@@ -91,5 +127,9 @@ function clearResults() {
 
 // Attach the form submission handler
 document.getElementById('myForm').addEventListener('submit', calculateHeading)
+
+function clearResults() {
+  document.getElementById('resultsContainer').innerHTML = ''
+}
 
 document.getElementById('myForm').addEventListener('reset', clearResults)

@@ -116,6 +116,33 @@ input[type='number']:focus {
   outline: none;
 }
 
+.speed-or-time {
+  padding: 10px 20px 0 20px;
+  border: 2px solid #c4c4c4;
+  margin: 0 0 20px 0;
+}
+
+/* Center the container vertically and horizontally */
+.divider-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 20px 0;
+}
+
+/* Style the horizontal lines */
+.divider-line {
+  flex: 1;
+  height: 4px; /* Set the line thickness to 4px */
+  background-color: #fff;
+}
+
+/* Style the text "OR" */
+.divider-text {
+  padding: 0 10px;
+  font-weight: bold;
+}
+
 .buttons {
   display: flex;
   gap: 10px; /* Adjust the gap value as needed */
@@ -210,7 +237,7 @@ input[type='number'] {
   font-size: 24px;
   border: 3px solid #444;
   border-radius: 2px;
-  padding: 20px;
+  padding: 15px;
   font-weight: 500;
   text-align: center;
   position: relative;
