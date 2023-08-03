@@ -27,7 +27,13 @@
               <label for="speed_self">Your Detachment's Speed (km/h):</label>
             </div>
 
-            <input type="number" id="speed_self" name="speed_self" required />
+            <input
+              type="number"
+              id="speed_self"
+              name="speed_self"
+              placeholder="e.g. 256"
+              required
+            />
 
             <div class="input-wrapper">
               <i class="fa-solid fa-gauge"></i>
@@ -38,6 +44,7 @@
               type="number"
               id="speed_target"
               name="speed_target"
+              placeholder="e.g. 110"
               required
             />
 
@@ -52,12 +59,13 @@
               type="number"
               id="direction_target_from_you"
               name="direction_target_from_you"
+              placeholder="e.g. 157"
               required
             />
 
             <div class="input-wrapper">
               <i class="fa-solid fa-compass"></i>
-              <label for="direction_target_from_you"
+              <label for="direction_target_heading"
                 >Target's Heading (°):</label
               >
             </div>
@@ -66,19 +74,19 @@
               type="number"
               id="direction_target_heading"
               name="direction_target_heading"
+              placeholder="e.g. 59"
               required
             />
 
             <div class="input-wrapper">
               <i class="fa-solid fa-ruler"></i>
-              <label for="direction_target_from_you"
-                >Distance to target (km):</label
-              >
+              <label for="distance_target">Distance to target (km):</label>
             </div>
             <input
               type="number"
               id="distance_target"
               name="distance_target"
+              placeholder="827 (km)"
               required
             />
 
@@ -99,10 +107,10 @@
           <i class="fas fa-lightbulb"></i>
         </h2>
 
-        <p>Hello, Captain.</p>
+        <p>Hello Captain.</p>
         <p>
-          Seems you've decoded the latest radio message and you're not sure what
-          to do?
+          It seems you've decoded a radio message and you're not sure what to
+          do?
         </p>
         <p>
           You know the target's <strong>location</strong> relative to your
