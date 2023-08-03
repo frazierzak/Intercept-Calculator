@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Intercept Course Calculator</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <img
+        src="{{ url_for('static', filename='images/logo.png') }}"
+        alt="Intercept Calculator"
+      />
+      <div class="form-container">
+        <div class="form-wrapper">
+          <form id="myForm" method="POST">
+            <!-- Your form fields go here -->
+            <label for="speed_self">Your Detachment Speed (km/h):</label>
+            <input
+              type="number"
+              id="speed_self"
+              name="speed_self"
+              value="{{ speed_self }}"
+              required
+            />
+
+            <label for="speed_target">Target Speed (km/h):</label>
+            <input
+              type="number"
+              id="speed_target"
+              name="speed_target"
+              value="{{ speed_target }}"
+              required
+            />
+
+            <label for="direction_target_from_you"
+              >Direction towards Target (°):</label
+            >
+            <input
+              type="number"
+              id="direction_target_from_you"
+              name="direction_target_from_you"
+              value="{{ direction_target_from_you }}"
+              required
+            />
+
+            <label for="direction_target_heading">Target's Heading (°):</label>
+            <input
+              type="number"
+              id="direction_target_heading"
+              name="direction_target_heading"
+              value="{{ direction_target_heading }}"
+              required
+            />
+
+            <label for="distance_target">Distance to Target (km):</label>
+            <input
+              type="number"
+              id="distance_target"
+              name="distance_target"
+              value="{{ distance_target }}"
+              required
+            />
+
+            <input type="submit" value="Calculate" />
+            <input type="reset" value="Clear" />
+          </form>
+        </div>
+        <div class="results-wrapper">
+          <h2>Results:</h2>
+          <div id="resultsContainer"></div>
+        </div>
+      </div>
+      {% if error %}
+      <p>{{ error }}</p>
+      {% endif %}
+    </div>
+
+    <script>
+      function submitForm(event) {
+        // Prevent the default form submission behavior
+        event.preventDefault()
+
+        // Get the form data
+        var formData = new FormData(document.getElementById('myForm'))
+
+        // Send the form data to the server
+        fetch('/', {
+          method: 'POST',
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            // Clear the previous results
+            document.getElementById('resultsContainer').innerHTML = ''
+
+            // Custom labels mapping
+            const customLabels = {
+              angle_final: 'Course:',
+              distance_final: 'Distance:',
+              time_to_intercept: 'Time:',
+            }
+
+            // Loop through the data to display results
+            for (var key in data) {
+              var resultElement = document.createElement('p')
+              var resultValue = data[key]
+
+              // Add units to each result
+              switch (key) {
+                case 'angle_final':
+                  resultValue += '°' // degree symbol
+                  break
+                case 'distance_final':
+                  resultValue += ' km'
+                  break
+                case 'time_to_intercept':
+                  resultValue += ' hrs'
+                  break
+                default:
+                  break
+              }
+
+              // Create a <span> element for the result value
+              var spanElement = document.createElement('span')
+              spanElement.textContent = resultValue
+
+              // Append the custom label to the result element
+              var customLabel = customLabels[key] || key
+              resultElement.appendChild(document.createTextNode(customLabel))
+
+              // Create a space between the label and the result value
+              resultElement.appendChild(document.createTextNode(' '))
+
+              // Append the <span> element to the result element
+              resultElement.appendChild(spanElement)
+
+              // Append the result element to the resultsContainer
+              document
+                .getElementById('resultsContainer')
+                .appendChild(resultElement)
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error)
+          })
+      }
+
+      // Attach the form submission handler
+      document.getElementById('myForm').addEventListener('submit', submitForm)
+    </script>
+  </body>
+</html>
