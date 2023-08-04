@@ -117,7 +117,7 @@ input[type='number']:focus {
 
 .speed-or-time {
   padding: 10px 20px 0 20px;
-  border: 2px solid #c4c4c4;
+  border: 2px solid #fff;
   margin: 0 0 20px 0;
 }
 
@@ -132,7 +132,7 @@ input[type='number']:focus {
 /* Style the horizontal lines */
 .divider-line {
   flex: 1;
-  height: 4px; /* Set the line thickness to 4px */
+  height: 4px;
   background-color: #fff;
 }
 
@@ -304,4 +304,78 @@ footer {
 
 p {
   margin: 0;
+}
+
+/* Responsive styles */
+@media only screen and (max-width: 768px) {
+  .form-container {
+    flex-direction: column;
+  }
+
+  .form-wrapper,
+  .results-wrapper {
+    width: 100%;
+  }
+
+  body {
+    margin: 10px;
+  }
+
+  .container {
+    margin: 0 auto 10px auto;
+    padding: 10px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  label {
+    font-size: 16px;
+  }
+
+  input[type='number'],
+  form input[type='hidden'] {
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+
+  .speed-or-time {
+    margin: 0 0 10px 0;
+  }
+
+  .divider-container {
+    margin: 0 0 10px 0;
+  }
+
+  .submit-button,
+  .clear-button {
+    font-size: 20px;
+    padding: 10px;
+  }
+
+  #resultsContainer {
+    font-size: 16px;
+  }
+
+  #resultsContainer p {
+    font-size: 14px;
+  }
+
+  #resultsContainer span {
+    font-size: 16px;
+    padding: 15px;
+  }
+
+  .desc {
+    font-size: 18px;
+  }
+
+  .desc p {
+    line-height: 24px;
+  }
+
+  footer {
+    padding: 10px;
+  }
 }

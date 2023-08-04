@@ -13,6 +13,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
     />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <body>
     <div class="container">
@@ -22,41 +23,39 @@
           <form id="myForm">
             <h2>Enter Data:</h2>
             <!-- Your form fields go here -->
-            <div class="speed-or-time">
-              <div class="input-wrapper">
-                <i class="fa-solid fa-gauge"></i>
-                <label for="speed_self"
-                  >Your Detachment's Max Speed (km/h):</label
-                >
-              </div>
-              <input
-                type="number"
-                id="speed_self"
-                name="speed_self"
-                placeholder="e.g. 256"
-                step="1"
-              />
-
-              <div class="divider-container">
-                <hr class="divider-line" />
-                <div class="divider-text">OR</div>
-                <hr class="divider-line" />
-              </div>
-
-              <div class="input-wrapper">
-                <i class="fa-solid fa-clock"></i>
-                <label for="desired_time"
-                  >Desired Time to intercept (hr):</label
-                >
-              </div>
-              <input
-                type="number"
-                id="desired_time"
-                name="desired_time"
-                placeholder="e.g. 10"
-                step="0.1"
-              />
+            <!-- <div class="speed-or-time"> -->
+            <div class="input-wrapper">
+              <i class="fa-solid fa-gauge"></i>
+              <label for="speed_self"
+                >Your Detachment's Max Speed (km/h):</label
+              >
             </div>
+            <input
+              type="number"
+              id="speed_self"
+              name="speed_self"
+              placeholder="e.g. 256"
+              step="1"
+            />
+
+            <!-- <div class="divider-container">
+                <hr class="divider-line" />
+                <div class="divider-text">AND / OR</div>
+                <hr class="divider-line" />
+              </div> -->
+
+            <!-- <div class="input-wrapper">
+              <i class="fa-solid fa-clock"></i>
+              <label for="desired_time">Desired Time to intercept (hr):</label>
+            </div>
+            <input
+              type="number"
+              id="desired_time"
+              name="desired_time"
+              placeholder="e.g. 10"
+              step="0.1"
+            /> -->
+            <!-- </div> -->
 
             <div class="input-wrapper">
               <i class="fa-solid fa-gauge"></i>
@@ -81,7 +80,7 @@
               type="number"
               id="direction_target_from_you"
               name="direction_target_from_you"
-              placeholder="e.g. 157"
+              placeholder="e.g. 137"
               required
               step="1"
             />
@@ -109,7 +108,7 @@
               type="number"
               id="distance_target"
               name="distance_target"
-              placeholder="827"
+              placeholder="875"
               required
               step="1"
             />
