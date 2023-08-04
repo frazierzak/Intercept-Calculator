@@ -59,8 +59,7 @@ h2 {
   font-size: 24px;
 }
 
-#form-container p,
-#resultsContainer p {
+#form-container p {
   margin: 10px 0;
   display: flex;
   align-items: center;
@@ -225,6 +224,15 @@ input[type='number'] {
   letter-spacing: 2px;
 }
 
+#resultsContainer p {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
 #resultsContainer p.warning {
   color: #f9f470;
   font-weight: 900;
@@ -234,10 +242,10 @@ input[type='number'] {
 }
 
 #resultsContainer span {
-  font-size: 24px;
+  font-size: 18px;
   border: 3px solid #444;
   border-radius: 2px;
-  padding: 15px;
+  padding: 20px;
   font-weight: 500;
   text-align: center;
   position: relative;

@@ -1,135 +1,92 @@
-function getFormValues() {
-  var speed_self = parseFloat(document.getElementById('speed_self').value)
-  var desired_time = parseFloat(document.getElementById('desired_time').value)
-  var speed_target = parseFloat(document.getElementById('speed_target').value)
-  var direction_target_from_you = parseFloat(
-    document.getElementById('direction_target_from_you').value
-  )
-  var direction_target_heading = parseFloat(
-    document.getElementById('direction_target_heading').value
-  )
-  var distance_target = parseFloat(
-    document.getElementById('distance_target').value
-  )
+document.addEventListener('DOMContentLoaded', function () {
+  document
+    .getElementById('myForm')
+    .addEventListener('submit', function (event) {
+      event.preventDefault()
 
-  return {
-    speed_self,
-    desired_time,
-    speed_target,
-    direction_target_from_you,
-    direction_target_heading,
-    distance_target,
-  }
-}
+      let maxSpeed = parseFloat(document.getElementById('speed_self').value)
+      let targetBearing = parseFloat(
+        document.getElementById('direction_target_from_you').value
+      )
+      let targetHeading = parseFloat(
+        document.getElementById('direction_target_heading').value
+      )
+      let targetSpeed = parseFloat(
+        document.getElementById('speed_target').value
+      )
+      let targetDistance = parseFloat(
+        document.getElementById('distance_target').value
+      )
 
-function displayWarning(message) {
-  document.getElementById(
-    'resultsContainer'
-  ).innerHTML = `<p class="warning">${message}</p>`
-}
+      let interceptCourse = calculateInterceptCourse(
+        targetBearing,
+        targetHeading,
+        targetSpeed,
+        maxSpeed
+      )
 
-function calculateHeading(event) {
-  event.preventDefault()
+      let interceptCourseRad = interceptCourse * (Math.PI / 180)
+      let targetBearingRad = targetBearing * (Math.PI / 180)
+      let targetHeadingRad = targetHeading * (Math.PI / 180)
 
-  // Get form values
-  var {
-    speed_self,
-    desired_time,
-    speed_target,
-    direction_target_from_you,
-    direction_target_heading,
-    distance_target,
-  } = getFormValues()
+      let closingSpeedX =
+        maxSpeed * Math.cos(interceptCourseRad) -
+        targetSpeed * Math.cos(targetHeadingRad)
+      let closingSpeedY =
+        maxSpeed * Math.sin(interceptCourseRad) -
+        targetSpeed * Math.sin(targetHeadingRad)
+      let closingSpeed = Math.sqrt(
+        closingSpeedX * closingSpeedX + closingSpeedY * closingSpeedY
+      )
 
-  // Check for invalid form inputs
-  var bothSelfSpeedAndDesiredTimeFilled =
-    !isNaN(speed_self) && !isNaN(desired_time)
-  var neitherSelfSpeedNorDesiredTimeFilled =
-    isNaN(speed_self) && isNaN(desired_time)
-  var anyRequiredFieldEmpty =
-    isNaN(speed_target) ||
-    isNaN(direction_target_from_you) ||
-    isNaN(direction_target_heading) ||
-    isNaN(distance_target)
+      let timeToIntercept = targetDistance / closingSpeed
+      let distanceToIntercept = timeToIntercept * maxSpeed
 
-  if (
-    bothSelfSpeedAndDesiredTimeFilled ||
-    neitherSelfSpeedNorDesiredTimeFilled ||
-    anyRequiredFieldEmpty
-  ) {
-    var warningMessage =
-      bothSelfSpeedAndDesiredTimeFilled || neitherSelfSpeedNorDesiredTimeFilled
-        ? 'You must fill out either speed_self or desired_time, but not both!'
-        : 'You must fill out all fields'
-    displayWarning(warningMessage)
-    return
-  }
+      // Display results in the resultsContainer
+      document.getElementById(
+        'resultsContainer'
+      ).innerHTML = `<p>Intercept Course: <span>${interceptCourse.toFixed(
+        2
+      )}°</span></p>
+    <p>Time to Intercept: <span>${timeToIntercept.toFixed(2)} HR</span></p>
+    <p>Distance to Intercept: <span>${distanceToIntercept.toFixed(
+      2
+    )} KM</span></p>`
+    })
+})
 
-  // If only speed_self is filled, calculate desired_time. If only desired_time is filled, calculate speed_self.
-  desired_time = isNaN(desired_time)
-    ? distance_target / speed_self
-    : desired_time
-  speed_self = isNaN(speed_self) ? distance_target / desired_time : speed_self
+function calculateInterceptCourse(
+  targetBearing,
+  targetHeading,
+  targetSpeed,
+  maxSpeed
+) {
+  // Convert degrees to radians for calculations
+  let targetBearingRad = targetBearing * (Math.PI / 180)
+  let targetHeadingRad = targetHeading * (Math.PI / 180)
 
-  //Calculations
-  // Convert degrees to radians
-  var angle_target = (90 - direction_target_from_you) * (Math.PI / 180)
-  if (angle_target < 0) {
-    angle_target += 2 * Math.PI
-  }
+  // Calculate the target's relative speed components
+  let targetSpeedX = targetSpeed * Math.cos(targetHeadingRad)
+  let targetSpeedY = targetSpeed * Math.sin(targetHeadingRad)
 
-  var angle_movement = (90 - direction_target_heading) * (Math.PI / 180)
-  if (angle_movement < 0) {
-    angle_movement += 2 * Math.PI
-  }
+  // Calculate the relative speed components needed to intercept the target
+  let interceptSpeedX = targetSpeedX + maxSpeed * Math.cos(targetBearingRad)
+  let interceptSpeedY = targetSpeedY + maxSpeed * Math.sin(targetBearingRad)
 
-  // Perform calculations
-  var distance_moved_target = speed_target * desired_time
+  // Calculate the required heading to intercept (in radians)
+  let interceptCourseRad = Math.atan2(interceptSpeedY, interceptSpeedX)
 
-  var x_target = distance_target * Math.cos(angle_target)
-  var y_target = distance_target * Math.sin(angle_target)
+  // Convert the intercept course back to degrees
+  let interceptCourse = interceptCourseRad * (180 / Math.PI)
 
-  var x_movement = distance_moved_target * Math.cos(angle_movement)
-  var y_movement = distance_moved_target * Math.sin(angle_movement)
-
-  var x_final = x_target + x_movement
-  var y_final = y_target + y_movement
-
-  var distance_final = Math.sqrt(x_final ** 2 + y_final ** 2)
-  var speed_self = distance_final / desired_time // Calculate speed_self using desired_time
-
-  var angle_final = Math.atan2(y_final, x_final) * (180 / Math.PI)
-  angle_final = 90 - angle_final
-  if (angle_final < 0) {
-    angle_final += 360
+  // Normalise the heading to the range [0, 360)
+  while (interceptCourse < 0) {
+    interceptCourse += 360
   }
 
-  // Round the results
-  speed_self = Math.round(speed_self * 10) / 10 // Round the result
-  angle_final = Math.round(angle_final)
-  distance_final = Math.round(distance_final)
+  while (interceptCourse >= 360) {
+    interceptCourse -= 360
+  }
 
-  // Update the results container
-  var resultsContainer = document.getElementById('resultsContainer')
-  resultsContainer.innerHTML = ''
-  resultsContainer.innerHTML +=
-    '<p>Course: <span>' + angle_final + '°</span></p>'
-  resultsContainer.innerHTML +=
-    '<p>Distance: <span>' + distance_final + ' km</span></p>'
-  resultsContainer.innerHTML +=
-    '<p>Speed: <span>' + speed_self + ' km/hr</span></p>' // Show calculated speed_self
+  return interceptCourse
 }
-
-function clearResults() {
-  var resultsContainer = document.getElementById('resultsContainer')
-  resultsContainer.innerHTML = ''
-}
-
-// Attach the form submission handler
-document.getElementById('myForm').addEventListener('submit', calculateHeading)
-
-function clearResults() {
-  document.getElementById('resultsContainer').innerHTML = ''
-}
-
-document.getElementById('myForm').addEventListener('reset', clearResults)
