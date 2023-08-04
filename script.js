@@ -53,6 +53,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
       let interceptCourse, timeToIntercept, distanceToIntercept, requiredSpeed
 
+      if (maxSpeed < targetSpeed) {
+        let interceptionCone = calculateInterceptionCone(targetSpeed, maxSpeed)
+        if (
+          Math.abs(targetBearing - targetHeading) > interceptionCone &&
+          Math.abs(targetBearing - targetHeading) < 360 - interceptionCone
+        ) {
+          document.getElementById(
+            'resultsContainer'
+          ).innerHTML = `<p>Interception is not possible with current maximum speed.</p>`
+          return
+        }
+      }
+
       if (!isNaN(desiredTimeToIntercept)) {
         // Convert all angles to radians for calculations
         targetBearing = toRadians(targetBearing)
@@ -81,14 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
         interceptCourse = normalizeAngle(interceptCourse)
 
         timeToIntercept = desiredTimeToIntercept
-      } else if (!isNaN(maxSpeed)) {
-        if (maxSpeed < targetSpeed) {
-          document.getElementById(
-            'resultsContainer'
-          ).innerHTML = `<p>Interception is not possible with current maximum speed.</p>`
-          return
-        }
-
+      } else {
         interceptCourse = calculateInterceptCourse(
           targetBearing,
           targetHeading,
@@ -112,11 +118,6 @@ document.addEventListener('DOMContentLoaded', function () {
         timeToIntercept = targetDistance / closingSpeed
         distanceToIntercept = timeToIntercept * maxSpeed
         requiredSpeed = distanceToIntercept / timeToIntercept
-      } else {
-        // If neither maxSpeed or desiredTimeToIntercept are entered
-        document.getElementById(
-          'resultsContainer'
-        ).innerHTML = `<p>Either your Max Speed or Desired Intercept Time must be entered`
       }
 
       // Display results in the resultsContainer
@@ -134,3 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('resultsContainer').innerHTML = ''
   })
 })
+
+function calculateInterceptionCone(targetSpeed, maxSpeed) {
+  return toDegrees(Math.acos(maxSpeed / targetSpeed))
+}
