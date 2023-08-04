@@ -81,7 +81,14 @@ document.addEventListener('DOMContentLoaded', function () {
         interceptCourse = normalizeAngle(interceptCourse)
 
         timeToIntercept = desiredTimeToIntercept
-      } else {
+      } else if (!isNaN(maxSpeed)) {
+        if (maxSpeed < targetSpeed) {
+          document.getElementById(
+            'resultsContainer'
+          ).innerHTML = `<p>Interception is not possible with current maximum speed.</p>`
+          return
+        }
+
         interceptCourse = calculateInterceptCourse(
           targetBearing,
           targetHeading,
@@ -90,7 +97,6 @@ document.addEventListener('DOMContentLoaded', function () {
         )
 
         let interceptCourseRad = toRadians(interceptCourse)
-        let targetBearingRad = toRadians(targetBearing)
         let targetHeadingRad = toRadians(targetHeading)
 
         let closingSpeedX =
@@ -106,6 +112,11 @@ document.addEventListener('DOMContentLoaded', function () {
         timeToIntercept = targetDistance / closingSpeed
         distanceToIntercept = timeToIntercept * maxSpeed
         requiredSpeed = distanceToIntercept / timeToIntercept
+      } else {
+        // If neither maxSpeed or desiredTimeToIntercept are entered
+        document.getElementById(
+          'resultsContainer'
+        ).innerHTML = `<p>Either your Max Speed or Desired Intercept Time must be entered`
       }
 
       // Display results in the resultsContainer
