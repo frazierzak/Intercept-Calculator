@@ -1,4 +1,34 @@
+// Helper functions
+const toRadians = (degrees) => degrees * (Math.PI / 180)
+const toDegrees = (radians) => radians * (180 / Math.PI)
+const normalizeAngle = (angle) => {
+  while (angle < 0) angle += 360
+  while (angle >= 360) angle -= 360
+  return angle
+}
+
 document.addEventListener('DOMContentLoaded', function () {
+  // Function to calculate intercept course
+  function calculateInterceptCourse(
+    targetBearing,
+    targetHeading,
+    targetSpeed,
+    maxSpeed
+  ) {
+    let targetBearingRad = toRadians(targetBearing)
+    let targetHeadingRad = toRadians(targetHeading)
+
+    let targetSpeedX = targetSpeed * Math.cos(targetHeadingRad)
+    let targetSpeedY = targetSpeed * Math.sin(targetHeadingRad)
+
+    let interceptSpeedX = targetSpeedX + maxSpeed * Math.cos(targetBearingRad)
+    let interceptSpeedY = targetSpeedY + maxSpeed * Math.sin(targetBearingRad)
+
+    let interceptCourseRad = Math.atan2(interceptSpeedY, interceptSpeedX)
+
+    return normalizeAngle(toDegrees(interceptCourseRad))
+  }
+
   document
     .getElementById('myForm')
     .addEventListener('submit', function (event) {
@@ -25,10 +55,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (!isNaN(desiredTimeToIntercept)) {
         // Convert all angles to radians for calculations
-        targetBearing = targetBearing * (Math.PI / 180)
-        targetHeading = targetHeading * (Math.PI / 180)
+        targetBearing = toRadians(targetBearing)
+        targetHeading = toRadians(targetHeading)
 
-        // Calculate the new position of the target after desiredTimeToIntercept
         let newTargetX =
           targetDistance * Math.cos(targetBearing) +
           targetSpeed * desiredTimeToIntercept * Math.cos(targetHeading)
@@ -36,7 +65,6 @@ document.addEventListener('DOMContentLoaded', function () {
           targetDistance * Math.sin(targetBearing) +
           targetSpeed * desiredTimeToIntercept * Math.sin(targetHeading)
 
-        // Calculate the distance to the new target position
         distanceToIntercept = Math.sqrt(
           newTargetX * newTargetX + newTargetY * newTargetY
         )
@@ -49,19 +77,8 @@ document.addEventListener('DOMContentLoaded', function () {
           return
         }
 
-        // Calculate the intercept course to the new target position
-        interceptCourse = Math.atan2(newTargetY, newTargetX)
-
-        // Convert the intercept course back to degrees
-        interceptCourse = interceptCourse * (180 / Math.PI)
-
-        // Normalize the heading to the range [0, 360)
-        while (interceptCourse < 0) {
-          interceptCourse += 360
-        }
-        while (interceptCourse >= 360) {
-          interceptCourse -= 360
-        }
+        interceptCourse = toDegrees(Math.atan2(newTargetY, newTargetX))
+        interceptCourse = normalizeAngle(interceptCourse)
 
         timeToIntercept = desiredTimeToIntercept
       } else {
@@ -72,9 +89,9 @@ document.addEventListener('DOMContentLoaded', function () {
           maxSpeed
         )
 
-        let interceptCourseRad = interceptCourse * (Math.PI / 180)
-        let targetBearingRad = targetBearing * (Math.PI / 180)
-        let targetHeadingRad = targetHeading * (Math.PI / 180)
+        let interceptCourseRad = toRadians(interceptCourse)
+        let targetBearingRad = toRadians(targetBearing)
+        let targetHeadingRad = toRadians(targetHeading)
 
         let closingSpeedX =
           maxSpeed * Math.cos(interceptCourseRad) -
@@ -101,43 +118,8 @@ document.addEventListener('DOMContentLoaded', function () {
 <p>Distance to Intercept: <span>${Math.round(distanceToIntercept)} KM</span></p>
 <p>Speed Required: <span>${Math.round(requiredSpeed)} KM/HR</span></p>`
     })
+
   document.getElementById('resetButton').addEventListener('click', function () {
     document.getElementById('resultsContainer').innerHTML = ''
   })
 })
-
-function calculateInterceptCourse(
-  targetBearing,
-  targetHeading,
-  targetSpeed,
-  maxSpeed
-) {
-  // Convert degrees to radians for calculations
-  let targetBearingRad = targetBearing * (Math.PI / 180)
-  let targetHeadingRad = targetHeading * (Math.PI / 180)
-
-  // Calculate the target's relative speed components
-  let targetSpeedX = targetSpeed * Math.cos(targetHeadingRad)
-  let targetSpeedY = targetSpeed * Math.sin(targetHeadingRad)
-
-  // Calculate the relative speed components needed to intercept the target
-  let interceptSpeedX = targetSpeedX + maxSpeed * Math.cos(targetBearingRad)
-  let interceptSpeedY = targetSpeedY + maxSpeed * Math.sin(targetBearingRad)
-
-  // Calculate the required heading to intercept (in radians)
-  let interceptCourseRad = Math.atan2(interceptSpeedY, interceptSpeedX)
-
-  // Convert the intercept course back to degrees
-  let interceptCourse = interceptCourseRad * (180 / Math.PI)
-
-  // Normalise the heading to the range [0, 360)
-  while (interceptCourse < 0) {
-    interceptCourse += 360
-  }
-
-  while (interceptCourse >= 360) {
-    interceptCourse -= 360
-  }
-
-  return interceptCourse
-}

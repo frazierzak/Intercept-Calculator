@@ -214,10 +214,10 @@
             </p>
 
             <pre>
-  <code>
-    Intercept Course = atan2((targetSpeed * sin(targetHeading)) + (maxSpeed * sin(targetBearing)), 
-                             (targetSpeed * cos(targetHeading)) + (maxSpeed * cos(targetBearing)))
-  </code>
+<code>
+  Intercept Course = atan2((targetSpeed * sin(targetHeading)) + (maxSpeed * sin(targetBearing)), 
+                           (targetSpeed * cos(targetHeading)) + (maxSpeed * cos(targetBearing)))
+</code>
 </pre>
 
             <p>
@@ -228,11 +228,11 @@
             </p>
 
             <pre>
-  <code>
-    newTargetX = (targetDistance * cos(targetBearing)) + (targetSpeed * desiredTimeToIntercept * cos(targetHeading))
-    newTargetY = (targetDistance * sin(targetBearing)) + (targetSpeed * desiredTimeToIntercept * sin(targetHeading))
-    Intercept Course = atan2(newTargetY, newTargetX)
-  </code>
+<code>
+  newTargetX = (targetDistance * cos(targetBearing)) + (targetSpeed * desiredTimeToIntercept * cos(targetHeading))
+  newTargetY = (targetDistance * sin(targetBearing)) + (targetSpeed * desiredTimeToIntercept * sin(targetHeading))
+  Intercept Course = atan2(newTargetY, newTargetX)
+</code>
 </pre>
 
             <h3>2. Time to Intercept Calculation:</h3>
@@ -244,9 +244,9 @@
             </p>
 
             <pre>
-  <code>
-    Time to Intercept = targetDistance / closingSpeed
-  </code>
+<code>
+  Time to Intercept = targetDistance / closingSpeed
+</code>
 </pre>
 
             <h3>3. Distance to Intercept Calculation:</h3>
@@ -258,9 +258,9 @@
             </p>
 
             <pre>
-  <code>
-    Distance to Intercept = maxSpeed * timeToIntercept
-  </code>
+<code>
+  Distance to Intercept = maxSpeed * timeToIntercept
+</code>
 </pre>
 
             <p>
@@ -269,9 +269,9 @@
             </p>
 
             <pre>
-  <code>
-    Distance to Intercept = sqrt(newTargetX^2 + newTargetY^2)
-  </code>
+<code>
+  Distance to Intercept = sqrt(newTargetX^2 + newTargetY^2)
+</code>
 </pre>
 
             <h3>4. Required Speed Calculation:</h3>
@@ -282,9 +282,9 @@
             </p>
 
             <pre>
-  <code>
-    Required Speed = Distance to Intercept / desiredTimeToIntercept
-  </code>
+<code>
+  Required Speed = Distance to Intercept / desiredTimeToIntercept
+</code>
 </pre>
 
             <p>
@@ -297,14 +297,16 @@
             </p>
 
             <pre>
-  <code>
-    Required Speed = Distance to Intercept / timeToIntercept
-  </code>
+<code>
+  Required Speed = Distance to Intercept / timeToIntercept
+</code>
 </pre>
 
             <p>
               Please note that trigonometric functions (sin, cos, atan2) in
-              these formulas work with radians, not degrees.
+              these formulas work with radians, not degrees. We have used helper
+              functions in the JavaScript code to convert between degrees and
+              radians where needed.
             </p>
           </div>
         </div>
