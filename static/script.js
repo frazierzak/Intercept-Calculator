@@ -101,6 +101,9 @@ document.addEventListener('DOMContentLoaded', function () {
 <p>Distance to Intercept: <span>${Math.round(distanceToIntercept)} KM</span></p>
 <p>Speed Required: <span>${Math.round(requiredSpeed)} KM/HR</span></p>`
     })
+  document.getElementById('resetButton').addEventListener('click', function () {
+    document.getElementById('resultsContainer').innerHTML = ''
+  })
 })
 
 function calculateInterceptCourse(

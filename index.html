@@ -16,6 +16,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
     <div class="container">
       <img src="static/images/logo.png" alt="Intercept Calculator" />
       <div class="form-container">
@@ -117,7 +119,9 @@
 
             <div class="buttons">
               <button type="submit" class="submit-button">Run</button>
-              <button type="reset" class="clear-button">Clear</button>
+              <button type="reset" id="resetButton" class="clear-button">
+                Clear
+              </button>
             </div>
           </form>
         </div>
@@ -127,7 +131,15 @@
         </div>
       </div>
       <div class="desc">
-        <div id="howToUse">
+        <div class="tabs">
+          <button class="tablink" onclick="openTab('howToUse')">
+            How to Use
+          </button>
+          <button class="tablink" onclick="openTab('mathContainer')">
+            Math Details
+          </button>
+        </div>
+        <div id="howToUse" class="content tab-content">
           <h2>
             <i class="fas fa-lightbulb"></i> How to use
             <i class="fas fa-lightbulb"></i>
@@ -174,7 +186,7 @@
             </li>
           </ol>
         </div>
-        <div id="mathContainer">
+        <div id="mathContainer" class="content tab-content">
           <div class="math">
             <h2>
               <i class="fa-solid fa-calculator"></i> Math Details
@@ -308,5 +320,11 @@
     </footer>
 
     <script src="static/script.js"></script>
+    <script>
+      function openTab(tabName) {
+        $('.tab-content').hide() // Hide all tab content.
+        $('#' + tabName).fadeIn() // Show the specific tab content with fade in effect.
+      }
+    </script>
   </body>
 </html>
