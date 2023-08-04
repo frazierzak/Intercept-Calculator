@@ -1,5 +1,5 @@
 # Intercept-Calculator
-![og_image](https://github.com/frazierzak/Intercept-Calculator/assets/99009/0a978cdc-a030-4b31-bd67-a611c2782624)
+![og_image](https://interceptcourse.app/images/og_image.png))
 A calculator that will give you the best optimal intercept course to the target. 
 
 Plug in your max speed, target speed, target direction, target heading, and target distance and get a calculated intercept point. 
