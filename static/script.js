@@ -97,11 +97,9 @@ document.addEventListener('DOMContentLoaded', function () {
       ).innerHTML = `<p>Intercept Course: <span>${Math.round(
         interceptCourse
       )}°</span></p>
-    <p>Time to Intercept: <span>${timeToIntercept.toFixed(1)} HR</span></p>
-    <p>Distance to Intercept: <span>${Math.round(
-      distanceToIntercept
-    )} KM</span></p>
-    <p>Speed Required: <span>${Math.round(requiredSpeed)} KM/HR</span></p>`
+<p>Time to Intercept: <span>${timeToIntercept.toFixed(1)} HR</span></p>
+<p>Distance to Intercept: <span>${Math.round(distanceToIntercept)} KM</span></p>
+<p>Speed Required: <span>${Math.round(requiredSpeed)} KM/HR</span></p>`
     })
 })
 
