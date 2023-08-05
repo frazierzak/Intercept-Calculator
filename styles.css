@@ -282,12 +282,7 @@ input[type='number'] {
 #interceptChartContainer {
   width: 100%;
   height: 250px;
-}
-
-#interceptChart {
   border: 3px dashed #333;
-  padding: 0;
-  margin: 0;
 }
 
 .desc {
