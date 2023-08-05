@@ -325,25 +325,33 @@ document.addEventListener('DOMContentLoaded', function () {
           ],
         },
         options: {
-          responsive: true, // Add this line to make the chart responsive
-          maintainAspectRatio: false, // Add this line to allow the chart to resize in both dimensions
+          responsive: true,
+          maintainAspectRatio: false,
           scales: {
             x: {
               title: {
-                display: false, // Hide the X label
+                display: false,
               },
               ticks: {
-                display: false, // Hide the X ticks
+                display: false,
+              },
+              grid: {
+                display: false, // This removes the gridlines
+                drawBorder: false, // This removes the border
               },
               min: xMin,
-              max: xMax + 100, // Add some padding to the right edge
+              max: xMax + 100,
             },
             y: {
               title: {
-                display: false, // Hide the Y label
+                display: false,
               },
               ticks: {
-                display: false, // Hide the Y ticks
+                display: false,
+              },
+              grid: {
+                display: false, // This removes the gridlines
+                drawBorder: false, // This removes the border
               },
               min: yMin,
               max: yMax,
@@ -351,7 +359,7 @@ document.addEventListener('DOMContentLoaded', function () {
           },
           plugins: {
             legend: {
-              display: false, // Add this line to hide the legend
+              display: false,
             },
             tooltip: {
               callbacks: {
@@ -368,7 +376,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 label: function (tooltipItem) {
                   const datasetLabel = tooltipItem.dataset.label
-
                   if (datasetLabel === 'Player Position') {
                     return 'Max Speed: ' + maxSpeed + ' km/h'
                   } else if (datasetLabel === 'Target Position') {
