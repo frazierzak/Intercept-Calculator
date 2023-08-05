@@ -1,4 +1,4 @@
-# Intercept-Calculator
+# HighFleet Intercept Calculator
 ![og_image](https://interceptcourse.app/images/og_image.png)
 A calculator that will give you the best optimal intercept course to the target. 
 

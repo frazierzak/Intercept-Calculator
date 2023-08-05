@@ -30,6 +30,12 @@ function calculateInterceptCourse(
   return interceptCourse
 }
 
+// JQuery to show Directions and Math
+function openTab(tabName) {
+  $('.tab-content').hide() // Hide all tab content.
+  $('#' + tabName).fadeIn() // Show the specific tab content with fade in effect.
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   document
     .getElementById('myForm')
