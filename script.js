@@ -2,33 +2,35 @@
 const toRadians = (degrees) => degrees * (Math.PI / 180)
 const toDegrees = (radians) => radians * (180 / Math.PI)
 const normalizeAngle = (angle) => {
-  while (angle < 0) angle += 360
-  while (angle >= 360) angle -= 360
-  return angle
+  angle = angle % 360
+  return angle >= 0 ? angle : angle + 360
+}
+
+// Function to calculate intercept course
+function calculateInterceptCourse(
+  targetBearing,
+  targetHeading,
+  targetSpeed,
+  maxSpeed
+) {
+  let targetBearingRad = toRadians(targetBearing)
+  let targetHeadingRad = toRadians(targetHeading)
+
+  console.log('Target Bearing:', targetBearing)
+  console.log('Target Heading:', targetHeading)
+
+  let a = targetSpeed / maxSpeed
+  let b = Math.sin(targetHeadingRad - targetBearingRad)
+
+  let interceptAngleRad = Math.asin(a * b)
+
+  let interceptCourseRad = targetBearingRad + interceptAngleRad
+  let interceptCourse = normalizeAngle(toDegrees(interceptCourseRad))
+
+  return interceptCourse
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  // Function to calculate intercept course
-  function calculateInterceptCourse(
-    targetBearing,
-    targetHeading,
-    targetSpeed,
-    maxSpeed
-  ) {
-    let targetBearingRad = toRadians(targetBearing)
-    let targetHeadingRad = toRadians(targetHeading)
-
-    let targetSpeedX = targetSpeed * Math.cos(targetHeadingRad)
-    let targetSpeedY = targetSpeed * Math.sin(targetHeadingRad)
-
-    let interceptSpeedX = targetSpeedX + maxSpeed * Math.cos(targetBearingRad)
-    let interceptSpeedY = targetSpeedY + maxSpeed * Math.sin(targetBearingRad)
-
-    let interceptCourseRad = Math.atan2(interceptSpeedY, interceptSpeedX)
-
-    return normalizeAngle(toDegrees(interceptCourseRad))
-  }
-
   document
     .getElementById('myForm')
     .addEventListener('submit', function (event) {
@@ -53,17 +55,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
       let interceptCourse, timeToIntercept, distanceToIntercept, requiredSpeed
 
-      if (!isNaN(desiredTimeToIntercept)) {
-        // Convert all angles to radians for calculations
-        targetBearing = toRadians(targetBearing)
-        targetHeading = toRadians(targetHeading)
+      // Convert all angles to radians for calculations
+      let targetBearingRad = toRadians(targetBearing)
+      let targetHeadingRad = toRadians(targetHeading)
 
+      if (!isNaN(desiredTimeToIntercept)) {
         let newTargetX =
-          targetDistance * Math.cos(targetBearing) +
-          targetSpeed * desiredTimeToIntercept * Math.cos(targetHeading)
+          targetDistance * Math.cos(targetBearingRad) +
+          targetSpeed * desiredTimeToIntercept * Math.cos(targetHeadingRad)
         let newTargetY =
-          targetDistance * Math.sin(targetBearing) +
-          targetSpeed * desiredTimeToIntercept * Math.sin(targetHeading)
+          targetDistance * Math.sin(targetBearingRad) +
+          targetSpeed * desiredTimeToIntercept * Math.sin(targetHeadingRad)
 
         distanceToIntercept = Math.sqrt(
           newTargetX * newTargetX + newTargetY * newTargetY
@@ -82,13 +84,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         timeToIntercept = desiredTimeToIntercept
       } else if (!isNaN(maxSpeed)) {
-        if (maxSpeed < targetSpeed) {
-          document.getElementById(
-            'resultsContainer'
-          ).innerHTML = `<p>Interception is not possible with current maximum speed.</p>`
-          return
-        }
-
         interceptCourse = calculateInterceptCourse(
           targetBearing,
           targetHeading,
@@ -96,9 +91,14 @@ document.addEventListener('DOMContentLoaded', function () {
           maxSpeed
         )
 
-        let interceptCourseRad = toRadians(interceptCourse)
-        let targetHeadingRad = toRadians(targetHeading)
+        if (interceptCourse === null) {
+          document.getElementById(
+            'resultsContainer'
+          ).innerHTML = `<p>Interception is not possible with current maximum speed.</p>`
+          return
+        }
 
+        let interceptCourseRad = toRadians(interceptCourse)
         let closingSpeedX =
           maxSpeed * Math.cos(interceptCourseRad) -
           targetSpeed * Math.cos(targetHeadingRad)
@@ -111,12 +111,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         timeToIntercept = targetDistance / closingSpeed
         distanceToIntercept = timeToIntercept * maxSpeed
-        requiredSpeed = distanceToIntercept / timeToIntercept
+        requiredSpeed = maxSpeed
       } else {
         // If neither maxSpeed or desiredTimeToIntercept are entered
         document.getElementById(
           'resultsContainer'
-        ).innerHTML = `<p>Either your Max Speed or Desired Intercept Time must be entered`
+        ).innerHTML = `<p>Either your Max Speed or Desired Intercept Time must be entered</p>`
+        return
       }
 
       // Display results in the resultsContainer
