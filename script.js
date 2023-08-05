@@ -191,14 +191,14 @@ document.addEventListener('DOMContentLoaded', function () {
         data: {
           datasets: [
             {
-              label: 'Intercept Course',
+              label: 'Interceptor',
               borderColor: '#f9f470',
               data: [playerPosition, playerInterceptPosition],
               fill: false,
               showLine: true,
             },
             {
-              label: 'Target Course',
+              label: 'Target',
               borderColor: 'rgb(190, 190, 190)',
               data: [targetInitialPosition, targetFinalPosition],
               fill: false,
@@ -276,5 +276,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   document.getElementById('resetButton').addEventListener('click', function () {
     document.getElementById('resultsContainer').innerHTML = ''
+    document.getElementById('interceptChartContainer').innerHTML =
+      '<canvas id="interceptChart"></canvas>'
   })
 })
