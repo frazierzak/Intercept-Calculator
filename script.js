@@ -32,6 +32,12 @@ function calculateInterceptCourse(
 
 let chart = null // Destroy previous chart
 
+const tooltipFont = {
+  family: 'Barlow', // Change this to the desired font family
+  size: 12, // Change this to the desired font size
+  color: '#000000', // Change this to the desired font color
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   document
     .getElementById('myForm')
@@ -186,23 +192,95 @@ document.addEventListener('DOMContentLoaded', function () {
         chart.destroy()
       }
 
+      // Calculate the direction vectors for the Interceptor and Target lines
+      const playerDirectionVector = {
+        x: playerInterceptPosition.x - playerPosition.x,
+        y: playerInterceptPosition.y - playerPosition.y,
+      }
+
+      const targetDirectionVector = {
+        x: targetFinalPosition.x - targetInitialPosition.x,
+        y: targetFinalPosition.y - targetInitialPosition.y,
+      }
+
+      // Helper function to create a visible line dataset
+      function createVisibleLineDataset(data, color) {
+        return {
+          borderColor: color,
+          data,
+          fill: false,
+          showLine: true,
+          pointRadius: 0, // Hide the points
+          pointHoverRadius: 0,
+          borderWidth: 2, // Set the line width as desired
+        }
+      }
+
+      // New points for the line continuation after intercept point
+      const playerInterceptContinuation = {
+        x: playerInterceptPosition.x + playerDirectionVector.x * 100,
+        y: playerInterceptPosition.y + playerDirectionVector.y * 100,
+      }
+
+      const targetInterceptContinuation = {
+        x: playerInterceptPosition.x + targetDirectionVector.x * 100,
+        y: playerInterceptPosition.y + targetDirectionVector.y * 100,
+      }
+
       chart = new Chart(ctx, {
         type: 'scatter',
         data: {
           datasets: [
+            // Interceptor: Line up to the intersection point
+            createVisibleLineDataset(
+              [playerPosition, playerInterceptPosition],
+              '#f9f470'
+            ),
+            // Interceptor: Line extending from the intersection point
+            createVisibleLineDataset(
+              [playerInterceptPosition, playerInterceptContinuation],
+              '#f9f470'
+            ),
+            // Target: Line up to the intersection point
+            createVisibleLineDataset(
+              [targetInitialPosition, targetFinalPosition],
+              'rgb(190, 190, 190)'
+            ),
+            // Target: Line extending from the intersection point
+            createVisibleLineDataset(
+              [targetFinalPosition, targetInterceptContinuation],
+              'rgb(190, 190, 190)'
+            ),
             {
-              label: 'Interceptor',
-              borderColor: '#f9f470',
-              data: [playerPosition, playerInterceptPosition],
-              fill: false,
-              showLine: true,
+              label: 'Intersection Point',
+              backgroundColor: '#f9f470', // Change the color as desired
+              // pointBorderColor: 'none', // Change the point border color as desired
+              pointBackgroundColor: '#f9f470', // Change the point fill color as desired
+              data: [playerInterceptPosition],
+              showLine: false,
+              pointRadius: 8, // Increase the point radius for better visibility
+              pointHoverRadius: 8, // Increase the hover radius as well
+              order: 3, // Set a higher order to draw the intersection point on top
             },
             {
-              label: 'Target',
-              borderColor: 'rgb(190, 190, 190)',
-              data: [targetInitialPosition, targetFinalPosition],
-              fill: false,
-              showLine: true,
+              label: 'Player Position',
+              backgroundColor: '#4c916b', // Change the color as desired
+              pointBackgroundColor: '#4c916b', // Change the point fill color as desired
+              data: [playerPosition],
+              showLine: false,
+              pointRadius: 8, // Increase the point radius for better visibility
+              pointHoverRadius: 8, // Increase the hover radius as well
+              order: 3, // Set a higher order to draw the point on top
+            },
+            {
+              label: 'Target Position',
+              backgroundColor: '#b45b5b', // Change the color as desired
+              pointBackgroundColor: '#b45b5b', // Change the point fill color as desired
+              data: [targetInitialPosition],
+              showLine: false,
+              pointRadius: 8, // Increase the point radius for better visibility
+              pointHoverRadius: 8, // Increase the hover radius as well
+              order: 3, // Set a higher order to draw the point on top
             },
           ],
         },
@@ -218,7 +296,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 display: false, // Hide the X ticks
               },
               min: xMin,
-              max: xMax,
+              max: xMax + 100, // Add some padding to the right edge
             },
             y: {
               title: {
@@ -238,7 +316,18 @@ document.addEventListener('DOMContentLoaded', function () {
             tooltip: {
               callbacks: {
                 title: function (tooltipItems) {
-                  return chart.data.datasets[tooltipItems[0].datasetIndex].label
+                  const datasetLabel =
+                    chart.data.datasets[tooltipItems[0].datasetIndex].label
+
+                  if (datasetLabel === 'Player Position') {
+                    return 'Player Position'
+                  } else if (datasetLabel === 'Target Position') {
+                    return 'Target Position'
+                  } else if (datasetLabel === 'Intersection Point') {
+                    return 'Intercept Point'
+                  }
+
+                  return ''
                 },
                 label: function (tooltipItem) {
                   if (tooltipItem.datasetIndex === 0) {
@@ -268,6 +357,8 @@ document.addEventListener('DOMContentLoaded', function () {
                   }
                 },
               },
+              titleFont: tooltipFont,
+              bodyFont: tooltipFont,
             },
           },
         },
@@ -278,5 +369,8 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('resultsContainer').innerHTML = ''
     document.getElementById('interceptChartContainer').innerHTML =
       '<canvas id="interceptChart"></canvas>'
+    if (chart !== null) {
+      chart.destroy()
+    }
   })
 })
