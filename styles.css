@@ -284,6 +284,12 @@ input[type='number'] {
   height: 250px;
 }
 
+#interceptChart {
+  border: 3px dashed #333;
+  padding: 0;
+  margin: 0;
+}
+
 .desc {
   text-align: left;
 }
