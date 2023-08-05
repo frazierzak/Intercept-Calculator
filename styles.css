@@ -374,6 +374,11 @@ footer {
   margin-bottom: 20px;
 }
 
+.tablink.toTop {
+  display: block;
+  margin: 0 auto;
+}
+
 .tablink::before {
   content: ' ';
   position: absolute;
@@ -399,8 +404,20 @@ footer {
   display: none;
 }
 
-.content {
-  animation: fadeIn 1s;
+.tab-content.active {
+  display: block;
+  animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeIn {

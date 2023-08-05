@@ -6,6 +6,40 @@ const normalizeAngle = (angle) => {
   return angle >= 180 ? angle - 360 : angle
 }
 
+//Jquery function to open tabs
+function openTab(tabName) {
+  $('.tab-content').removeClass('active') // Hide all tab content.
+  $('#' + tabName).addClass('active') // Show the specific tab content with slide-in effect.
+
+  // Scroll to the content with a smooth animation
+  $('html, body').animate(
+    {
+      scrollTop: $('#' + tabName).offset().top,
+    },
+    500
+  ) // Adjust scroll speed as needed.
+}
+
+// Function to handle back-to-top button visibility
+function handleBackToTopButton() {
+  const scrollTop = $(window).scrollTop()
+  const windowHeight = $(window).height()
+
+  if (scrollTop > windowHeight / 2) {
+    $('.back-to-top').addClass('active')
+  } else {
+    $('.back-to-top').removeClass('active')
+  }
+}
+
+// Function to scroll back to top when the "BACK TO TOP" button is clicked
+function backToTop() {
+  $('html, body').animate({ scrollTop: 0 }, 500) // Scroll to the top with a smooth animation
+}
+
+// Attach a scroll event listener to show/hide the "BACK TO TOP" button
+$(window).on('scroll', handleBackToTopButton)
+
 // Function to calculate intercept course
 function calculateInterceptCourse(
   targetBearing,
@@ -231,56 +265,50 @@ document.addEventListener('DOMContentLoaded', function () {
         type: 'scatter',
         data: {
           datasets: [
-            // Interceptor: Line up to the intersection point
-            createVisibleLineDataset(
-              [playerPosition, playerInterceptPosition],
-              '#f9f470'
-            ),
-            // Interceptor: Line extending from the intersection point
-            createVisibleLineDataset(
-              [playerInterceptPosition, playerInterceptContinuation],
-              '#f9f470'
-            ),
-            // Target: Line up to the intersection point
-            createVisibleLineDataset(
-              [targetInitialPosition, targetFinalPosition],
-              'rgb(190, 190, 190)'
-            ),
-            // Target: Line extending from the intersection point
-            createVisibleLineDataset(
-              [targetFinalPosition, targetInterceptContinuation],
-              'rgb(190, 190, 190)'
-            ),
             {
               label: 'Intersection Point',
-              backgroundColor: '#f9f470', // Change the color as desired
-              // pointBorderColor: 'none', // Change the point border color as desired
-              pointBackgroundColor: '#f9f470', // Change the point fill color as desired
+              backgroundColor: '#f9f470',
+              pointBackgroundColor: '#f9f470',
               data: [playerInterceptPosition],
               showLine: false,
-              pointRadius: 8, // Increase the point radius for better visibility
-              pointHoverRadius: 8, // Increase the hover radius as well
-              order: 3, // Set a higher order to draw the intersection point on top
+              pointRadius: 8,
+              pointHoverRadius: 8,
             },
             {
               label: 'Player Position',
-              backgroundColor: '#4c916b', // Change the color as desired
-              pointBackgroundColor: '#4c916b', // Change the point fill color as desired
+              backgroundColor: '#4c916b',
+              pointBackgroundColor: '#4c916b',
               data: [playerPosition],
               showLine: false,
-              pointRadius: 8, // Increase the point radius for better visibility
-              pointHoverRadius: 8, // Increase the hover radius as well
-              order: 3, // Set a higher order to draw the point on top
+              pointRadius: 8,
+              pointHoverRadius: 8,
             },
             {
               label: 'Target Position',
-              backgroundColor: '#b45b5b', // Change the color as desired
-              pointBackgroundColor: '#b45b5b', // Change the point fill color as desired
+              backgroundColor: '#b45b5b',
+              pointBackgroundColor: '#b45b5b',
               data: [targetInitialPosition],
               showLine: false,
-              pointRadius: 8, // Increase the point radius for better visibility
-              pointHoverRadius: 8, // Increase the hover radius as well
-              order: 3, // Set a higher order to draw the point on top
+              pointRadius: 8,
+              pointHoverRadius: 8,
+            },
+            {
+              borderColor: '#f9f470',
+              data: [playerPosition, playerInterceptContinuation],
+              fill: false,
+              showLine: true,
+              pointRadius: 0,
+              pointHoverRadius: 0,
+              borderWidth: 2,
+            },
+            {
+              borderColor: 'rgb(190, 190, 190)',
+              data: [targetInitialPosition, targetInterceptContinuation],
+              fill: false,
+              showLine: true,
+              pointRadius: 0,
+              pointHoverRadius: 0,
+              borderWidth: 2,
             },
           ],
         },
@@ -316,44 +344,40 @@ document.addEventListener('DOMContentLoaded', function () {
             tooltip: {
               callbacks: {
                 title: function (tooltipItems) {
-                  const datasetLabel =
-                    chart.data.datasets[tooltipItems[0].datasetIndex].label
-
+                  const datasetLabel = tooltipItems[0].dataset.label
                   if (datasetLabel === 'Player Position') {
-                    return 'Player Position'
+                    return 'Detachment Starting Position'
                   } else if (datasetLabel === 'Target Position') {
-                    return 'Target Position'
+                    return 'Target Starting Position'
                   } else if (datasetLabel === 'Intersection Point') {
                     return 'Intercept Point'
                   }
-
                   return ''
                 },
                 label: function (tooltipItem) {
-                  if (tooltipItem.datasetIndex === 0) {
-                    if (tooltipItem.dataIndex === 0) {
-                      return 'Max Speed: ' + maxSpeed + 'km/h'
-                    } else {
-                      return (
-                        'Intercept\nTime: ' +
+                  const datasetLabel = tooltipItem.dataset.label
+
+                  if (datasetLabel === 'Player Position') {
+                    return 'Max Speed: ' + maxSpeed + ' km/h'
+                  } else if (datasetLabel === 'Target Position') {
+                    return [
+                      'Course: ' + targetHeading + '°',
+                      'Speed: ' + targetSpeed + ' km/h',
+                      'Distance from Detachment: ' +
+                        Math.round(targetDistance) +
+                        ' km',
+                    ]
+                  } else if (datasetLabel === 'Intersection Point') {
+                    return [
+                      'Intercept Course: ' + Math.round(interceptCourse) + '°',
+                      'Intercept Speed: ' + Math.round(requiredSpeed) + ' km/h',
+                      'Time to Intercept: ' +
                         timeToIntercept.toFixed(1) +
-                        'hr\nDistance: ' +
+                        ' HR',
+                      'Distance to Intercept: ' +
                         Math.round(distanceToIntercept) +
-                        'km'
-                      )
-                    }
-                  } else {
-                    if (tooltipItem.dataIndex === 0) {
-                      return (
-                        'Speed: ' +
-                        targetSpeed +
-                        'km/h\nCourse: ' +
-                        targetHeading +
-                        '°\nDistance: ' +
-                        targetDistance +
-                        'km'
-                      )
-                    }
+                        ' KM',
+                    ]
                   }
                 },
               },
