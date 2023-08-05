@@ -35,14 +35,12 @@
       <div class="form-container">
         <div class="form-wrapper">
           <form id="myForm">
-            <h2>Enter Data:</h2>
             <!-- Your form fields go here -->
-            <div class="speed-or-time">
+            <div class="required">
+              <div class="text">REQUIRED</div>
               <div class="input-wrapper">
                 <i class="fa-solid fa-gauge"></i>
-                <label for="speed_self"
-                  >Your Detachment's Max Speed (km/h):</label
-                >
+                <label for="speed_self">Detachment's Max Speed (km/h):</label>
               </div>
               <input
                 type="number"
@@ -50,13 +48,67 @@
                 name="speed_self"
                 placeholder="e.g. 256"
                 step="1"
+                required
               />
 
-              <div class="divider-container">
-                <hr class="divider-line" />
-                <div class="divider-text">AND / OR</div>
-                <hr class="divider-line" />
+              <div class="input-wrapper">
+                <i class="fa-solid fa-gauge"></i>
+                <label for="speed_target">Target's Speed (km/h):</label>
               </div>
+              <input
+                type="number"
+                id="speed_target"
+                name="speed_target"
+                placeholder="e.g. 110"
+                required
+                step="1"
+              />
+
+              <div class="input-wrapper">
+                <i class="fa-solid fa-compass"></i>
+                <label for="direction_target_from_you"
+                  >Direction towards Target (°):</label
+                >
+              </div>
+              <input
+                type="number"
+                id="direction_target_from_you"
+                name="direction_target_from_you"
+                placeholder="e.g. 137"
+                required
+                step="1"
+              />
+
+              <div class="input-wrapper">
+                <i class="fa-solid fa-compass"></i>
+                <label for="direction_target_heading"
+                  >Target's Heading (°):</label
+                >
+              </div>
+              <input
+                type="number"
+                id="direction_target_heading"
+                name="direction_target_heading"
+                placeholder="e.g. 59"
+                required
+                step="1"
+              />
+
+              <div class="input-wrapper">
+                <i class="fa-solid fa-ruler"></i>
+                <label for="distance_target">Distance to target (km):</label>
+              </div>
+              <input
+                type="number"
+                id="distance_target"
+                name="distance_target"
+                placeholder="875"
+                required
+                step="1"
+              />
+            </div>
+            <div class="optional">
+              <div class="text">OPTIONAL</div>
 
               <div class="input-wrapper">
                 <i class="fa-solid fa-clock"></i>
@@ -72,63 +124,6 @@
                 step="0.1"
               />
             </div>
-
-            <div class="input-wrapper">
-              <i class="fa-solid fa-gauge"></i>
-              <label for="speed_target">Target's Speed (km/h):</label>
-            </div>
-            <input
-              type="number"
-              id="speed_target"
-              name="speed_target"
-              placeholder="e.g. 110"
-              required
-              step="1"
-            />
-
-            <div class="input-wrapper">
-              <i class="fa-solid fa-compass"></i>
-              <label for="direction_target_from_you"
-                >Direction towards Target (°):</label
-              >
-            </div>
-            <input
-              type="number"
-              id="direction_target_from_you"
-              name="direction_target_from_you"
-              placeholder="e.g. 137"
-              required
-              step="1"
-            />
-
-            <div class="input-wrapper">
-              <i class="fa-solid fa-compass"></i>
-              <label for="direction_target_heading"
-                >Target's Heading (°):</label
-              >
-            </div>
-            <input
-              type="number"
-              id="direction_target_heading"
-              name="direction_target_heading"
-              placeholder="e.g. 59"
-              required
-              step="1"
-            />
-
-            <div class="input-wrapper">
-              <i class="fa-solid fa-ruler"></i>
-              <label for="distance_target">Distance to target (km):</label>
-            </div>
-            <input
-              type="number"
-              id="distance_target"
-              name="distance_target"
-              placeholder="875"
-              required
-              step="1"
-            />
-
             <div class="buttons">
               <button type="submit" class="submit-button">Run</button>
               <button type="reset" id="resetButton" class="clear-button">
@@ -138,9 +133,8 @@
           </form>
         </div>
         <div class="results-wrapper">
-          <h2>Results:</h2>
           <div id="resultsContainer"></div>
-          <h2>Chart:</h2>
+
           <div id="interceptChartContainer">
             <canvas id="interceptChart"></canvas>
           </div>
@@ -160,161 +154,115 @@
             <i class="fas fa-lightbulb"></i> How to use
             <i class="fas fa-lightbulb"></i>
           </h2>
-
           <p>Greetings, brave Tarkhan.</p>
           <p>
-            It seems you've decoded a radio message and you're not sure what to
-            do?
+            Decoded a radio message and uncertain about the next move? Fret not.
           </p>
           <p>
-            You know the target's <strong>location</strong> relative to your
-            position, their <strong>heading</strong>, and their
-            <strong>speed</strong>, correct? That's all we need to
-            <strong>INTERCEPT!</strong>
+            For a successful <strong>INTERCEPT</strong>, ensure you have the
+            target's <strong>location</strong> relative to your position, their
+            <strong>heading</strong>, and their <strong>speed</strong>.
           </p>
           <ol>
+            <li>Input your detachment's max speed. This is a required step.</li>
+            <li>Enter the target's speed. This is mandatory.</li>
             <li>
-              Put in your detachment's max speed and/or the desired time to
-              intercept. At least one of these is required.
-            </li>
-            <li>Put the target's speed. This is required.</li>
-            <li>
-              Put the direction on your compass the target is located. Use the
-              ruler and click on your position then move the mouse over the
-              target's position to recieve this number. This is required.
+              Determine the target's direction on your compass. Utilize the
+              ruler; click on your position and drag to the target's location to
+              receive this bearing. This step is compulsory.
             </li>
             <li>
-              Put in the target's current heading. If this information is
-              unknown to you but you know what city they are heading to next,
-              click on their position with the ruler and move over the next city
-              on their destination to get this number. This is required.
+              Input the target's current heading. If the heading is unknown, but
+              you're aware of the target's next city destination, use the ruler.
+              Click on their current position and drag to their next city
+              destination to ascertain the heading. This is an essential step.
             </li>
             <li>
-              Put in the distance to the target from your current position. Use
-              the ruler to obtain this number. This is required.
+              Indicate the distance between you and the target. The ruler will
+              assist in gauging this distance. This is a required step.
             </li>
             <li>
-              Click <strong>RUN</strong> to calculate the intercept course. Use
-              these results to set your detachment on an intercept course with
-              the target. Be aware that if your intercept point is past the
-              target's next destination this will not work. Also, the calculator
-              will know if intercept is possible and will alert you if not.
+              If you wish, specify a desired time for the intercept. Patience
+              can often be a strategic advantage.
+            </li>
+            <li>
+              Click <strong>RUN</strong> to derive the intercept course. Utilize
+              the results to set your detachment on an intercept trajectory with
+              the target. Remember, if your intercept point is beyond the
+              target's next stop, the intercept will fail. The calculator will
+              notify you if the intercept isn't feasible.
             </li>
           </ol>
         </div>
+
         <div id="mathContainer" class="content tab-content">
           <div class="math">
             <h2>
               <i class="fa-solid fa-calculator"></i> Math Details
               <i class="fa-solid fa-calculator"></i>
             </h2>
-
             <h3>1. Intercept Course Calculation:</h3>
-
             <p>
-              The intercept course is calculated by considering both your
-              bearing to the target and the target's heading. By combining
-              these, we can determine the optimal heading to intercept the
-              target.
+              The intercept course blends your bearing towards the target and
+              the target's heading. This amalgamation helps in determining the
+              optimal heading to successfully intercept the target.
             </p>
-
             <pre>
 <code>
-  Intercept Course = atan2((targetSpeed * sin(targetHeading)) + (maxSpeed * sin(targetBearing)), 
-                           (targetSpeed * cos(targetHeading)) + (maxSpeed * cos(targetBearing)))
+Intercept Course = atan2((targetSpeed * sin(targetHeading)) + (maxSpeed * sin(targetBearing)), 
+                         (targetSpeed * cos(targetHeading)) + (maxSpeed * cos(targetBearing)))
 </code>
 </pre>
-
-            <p>
-              If we are considering the "Desired Time to Intercept", then the
-              target will have moved by the time we get there. We take this into
-              account and calculate the intercept course to the target's
-              predicted future position, rather than its current position:
-            </p>
-
-            <pre>
-<code>
-  newTargetX = (targetDistance * cos(targetBearing)) + (targetSpeed * desiredTimeToIntercept * cos(targetHeading))
-  newTargetY = (targetDistance * sin(targetBearing)) + (targetSpeed * desiredTimeToIntercept * sin(targetHeading))
-  Intercept Course = atan2(newTargetY, newTargetX)
-</code>
-</pre>
-
             <h3>2. Time to Intercept Calculation:</h3>
-
             <p>
-              This is calculated by taking the distance to the target and
-              dividing it by the speed at which you are closing that distance
-              (the closing speed).
+              The time to intercept is gauged by dividing the distance to the
+              target by the closing speed.
             </p>
-
             <pre>
 <code>
-  Time to Intercept = targetDistance / closingSpeed
+Time to Intercept = targetDistance / closingSpeed
 </code>
 </pre>
-
             <h3>3. Distance to Intercept Calculation:</h3>
-
             <p>
-              If a desired time to intercept is not provided, this is simply the
-              distance you would travel given your max speed and the time to
-              intercept:
+              In scenarios where the desired time to intercept isn't provided,
+              the distance is essentially the path you'd cover, considering your
+              max speed and the time to intercept.
             </p>
-
             <pre>
 <code>
-  Distance to Intercept = maxSpeed * timeToIntercept
+Distance to Intercept = maxSpeed * timeToIntercept
 </code>
 </pre>
-
-            <p>
-              If a desired time to intercept is provided, this is the distance
-              to the new predicted position of the target:
-            </p>
-
-            <pre>
-<code>
-  Distance to Intercept = sqrt(newTargetX^2 + newTargetY^2)
-</code>
-</pre>
-
             <h3>4. Required Speed Calculation:</h3>
-
             <p>
-              If a desired time to intercept is provided, this is the speed
-              required to reach the target in the desired time:
+              The required speed depends on the desired time to intercept. If
+              provided, the speed needed to intercept the target within the
+              specified time is calculated.
             </p>
-
             <pre>
 <code>
-  Required Speed = Distance to Intercept / desiredTimeToIntercept
+Required Speed = Distance to Intercept / desiredTimeToIntercept
 </code>
 </pre>
-
             <p>
-              If a desired time is not provided, the required speed is
-              essentially your maximum speed, because you're assumed to be
-              travelling at max speed to intercept the target as quickly as
-              possible. The actual speed at which you intercept the target is a
-              result of your speed and course, and the target's speed and
-              course:
+              If the desired time isn't specified, you're presumed to be moving
+              at max speed to intercept the target swiftly.
             </p>
-
             <pre>
 <code>
-  Required Speed = Distance to Intercept / timeToIntercept
+Required Speed = Distance to Intercept / timeToIntercept
 </code>
 </pre>
-
             <p>
-              Please note that trigonometric functions (sin, cos, atan2) in
-              these formulas work with radians, not degrees. We have used helper
-              functions in the JavaScript code to convert between degrees and
-              radians where needed.
+              Remember, trigonometric functions in these formulas (like sin,
+              cos, atan2) require angles in radians, not degrees. In the script,
+              we've utilized helper functions to toggle between degrees and
+              radians as necessary.
             </p>
           </div>
         </div>
+
         <button class="tablink toTop" onclick="backToTop()">BACK TO TOP</button>
       </div>
     </div>

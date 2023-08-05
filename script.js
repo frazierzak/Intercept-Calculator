@@ -6,7 +6,7 @@ const normalizeAngle = (angle) => {
   return angle >= 180 ? angle - 360 : angle
 }
 
-//Jquery function to open tabs
+// Jquery function to open tabs
 function openTab(tabName) {
   $('.tab-content').removeClass('active') // Hide all tab content.
   $('#' + tabName).addClass('active') // Show the specific tab content with slide-in effect.
@@ -17,7 +17,7 @@ function openTab(tabName) {
       scrollTop: $('#' + tabName).offset().top,
     },
     500
-  ) // Adjust scroll speed as needed.
+  )
 }
 
 // Function to handle back-to-top button visibility
@@ -50,9 +50,6 @@ function calculateInterceptCourse(
   let targetBearingRad = toRadians(targetBearing)
   let targetHeadingRad = toRadians(targetHeading)
 
-  console.log('Target Bearing:', targetBearing)
-  console.log('Target Heading:', targetHeading)
-
   let a = targetSpeed / maxSpeed
   let b = Math.sin(targetHeadingRad - targetBearingRad)
 
@@ -64,7 +61,7 @@ function calculateInterceptCourse(
   return interceptCourse
 }
 
-let chart = null // Destroy previous chart
+let chart = null // Placeholder to keep track of the current chart
 
 const tooltipFont = {
   family: 'Barlow', // Change this to the desired font family
@@ -78,6 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
     .addEventListener('submit', function (event) {
       event.preventDefault()
 
+      // Parsing input values from the form
       let maxSpeed = parseFloat(document.getElementById('speed_self').value)
       let targetBearing = parseFloat(
         document.getElementById('direction_target_from_you').value
@@ -101,7 +99,9 @@ document.addEventListener('DOMContentLoaded', function () {
       let targetBearingRad = toRadians(targetBearing)
       let targetHeadingRad = toRadians(targetHeading)
 
+      // Calculate Intercept based on desired time
       if (!isNaN(desiredTimeToIntercept)) {
+        // New position of the target after desiredTimeToIntercept
         let newTargetX =
           targetDistance * Math.cos(targetBearingRad) +
           targetSpeed * desiredTimeToIntercept * Math.cos(targetHeadingRad)
@@ -109,6 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
           targetDistance * Math.sin(targetBearingRad) +
           targetSpeed * desiredTimeToIntercept * Math.sin(targetHeadingRad)
 
+        // Calculate the distance from player to the new target position
         distanceToIntercept = Math.sqrt(
           newTargetX * newTargetX + newTargetY * newTargetY
         )
@@ -118,11 +119,17 @@ document.addEventListener('DOMContentLoaded', function () {
           document.getElementById(
             'resultsContainer'
           ).innerHTML = `<p>Interception is not possible within the given timeframe with current maximum speed.</p>`
+          if (chart !== null) {
+            chart.destroy()
+          }
           return
         }
 
+        // Calculate the bearing from player's position to the new target position
         interceptCourse = toDegrees(Math.atan2(newTargetY, newTargetX))
-        interceptCourse = normalizeAngle(interceptCourse)
+        if (interceptCourse < 0) {
+          interceptCourse += 360
+        }
 
         timeToIntercept = desiredTimeToIntercept
       } else if (!isNaN(maxSpeed)) {
@@ -137,6 +144,9 @@ document.addEventListener('DOMContentLoaded', function () {
           document.getElementById(
             'resultsContainer'
           ).innerHTML = `<p>Interception is not possible with current maximum speed.</p>`
+          if (chart !== null) {
+            chart.destroy()
+          }
           return
         }
 
@@ -155,14 +165,14 @@ document.addEventListener('DOMContentLoaded', function () {
         distanceToIntercept = timeToIntercept * maxSpeed
         requiredSpeed = distanceToIntercept / timeToIntercept
       } else {
-        // If neither maxSpeed or desiredTimeToIntercept are entered
+        // Error handling if neither maxSpeed nor desiredTimeToIntercept are entered
         document.getElementById(
           'resultsContainer'
         ).innerHTML = `<p>Either your Max Speed or Desired Intercept Time must be entered</p>`
         return
       }
 
-      // Display results in the resultsContainer
+      // Display the results and generate the scatter plot
       document.getElementById(
         'resultsContainer'
       ).innerHTML = `<p>Intercept Course: <span>${Math.round(
@@ -190,13 +200,14 @@ document.addEventListener('DOMContentLoaded', function () {
             timeToIntercept *
             Math.sin(toRadians(90 - targetHeading)),
       }
+
       let playerInterceptPosition = {
         x:
-          maxSpeed *
+          requiredSpeed *
           timeToIntercept *
           Math.cos(toRadians(90 - interceptCourse)),
         y:
-          maxSpeed *
+          requiredSpeed *
           timeToIntercept *
           Math.sin(toRadians(90 - interceptCourse)),
       }
@@ -214,6 +225,7 @@ document.addEventListener('DOMContentLoaded', function () {
         targetFinalPosition.y,
         playerInterceptPosition.y,
       ]
+
       let xMin = Math.min(...xValues) - 100
       let xMax = Math.max(...xValues) + 100
       let yMin = Math.min(...yValues) - 100
@@ -276,8 +288,8 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             {
               label: 'Player Position',
-              backgroundColor: '#4c916b',
-              pointBackgroundColor: '#4c916b',
+              backgroundColor: '#efefef',
+              pointBackgroundColor: '#efefef',
               data: [playerPosition],
               showLine: false,
               pointRadius: 8,
@@ -389,12 +401,17 @@ document.addEventListener('DOMContentLoaded', function () {
       })
     })
 
+  // Reset Functionality
   document.getElementById('resetButton').addEventListener('click', function () {
     document.getElementById('resultsContainer').innerHTML = ''
-    document.getElementById('interceptChartContainer').innerHTML =
-      '<canvas id="interceptChart"></canvas>'
+
+    // Destroy the current chart if it exists and initialize a new one
     if (chart !== null) {
       chart.destroy()
+      chart = new Chart(
+        document.getElementById('interceptChart').getContext('2d'),
+        {}
+      )
     }
   })
 })
