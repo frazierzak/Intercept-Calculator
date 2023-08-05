@@ -275,6 +275,11 @@ input[type='number'] {
   bottom: 5px;
 }
 
+#interceptChartContainer {
+  width: 100%;
+  height: 250px;
+}
+
 .desc {
   text-align: left;
 }

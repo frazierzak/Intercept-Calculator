@@ -3,7 +3,7 @@ const toRadians = (degrees) => degrees * (Math.PI / 180)
 const toDegrees = (radians) => radians * (180 / Math.PI)
 const normalizeAngle = (angle) => {
   angle = angle % 360
-  return angle >= 0 ? angle : angle + 360
+  return angle >= 180 ? angle - 360 : angle
 }
 
 // Function to calculate intercept course
@@ -30,11 +30,7 @@ function calculateInterceptCourse(
   return interceptCourse
 }
 
-// JQuery to show Directions and Math
-function openTab(tabName) {
-  $('.tab-content').hide() // Hide all tab content.
-  $('#' + tabName).fadeIn() // Show the specific tab content with fade in effect.
-}
+let chart = null // Destroy previous chart
 
 document.addEventListener('DOMContentLoaded', function () {
   document
@@ -117,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         timeToIntercept = targetDistance / closingSpeed
         distanceToIntercept = timeToIntercept * maxSpeed
-        requiredSpeed = maxSpeed
+        requiredSpeed = distanceToIntercept / timeToIntercept
       } else {
         // If neither maxSpeed or desiredTimeToIntercept are entered
         document.getElementById(
@@ -135,6 +131,147 @@ document.addEventListener('DOMContentLoaded', function () {
 <p>Time to Intercept: <span>${timeToIntercept.toFixed(1)} HR</span></p>
 <p>Distance to Intercept: <span>${Math.round(distanceToIntercept)} KM</span></p>
 <p>Speed Required: <span>${Math.round(requiredSpeed)} KM/HR</span></p>`
+
+      // Create a scatter plot showing the player's and target's positions over time
+      let playerPosition = { x: 0, y: 0 }
+      let targetInitialPosition = {
+        x: targetDistance * Math.cos(toRadians(90 - targetBearing)),
+        y: targetDistance * Math.sin(toRadians(90 - targetBearing)),
+      }
+      let targetFinalPosition = {
+        x:
+          targetInitialPosition.x +
+          targetSpeed *
+            timeToIntercept *
+            Math.cos(toRadians(90 - targetHeading)),
+        y:
+          targetInitialPosition.y +
+          targetSpeed *
+            timeToIntercept *
+            Math.sin(toRadians(90 - targetHeading)),
+      }
+      let playerInterceptPosition = {
+        x:
+          maxSpeed *
+          timeToIntercept *
+          Math.cos(toRadians(90 - interceptCourse)),
+        y:
+          maxSpeed *
+          timeToIntercept *
+          Math.sin(toRadians(90 - interceptCourse)),
+      }
+
+      // Calculate the maximum and minimum values for the x and y coordinates
+      let xValues = [
+        playerPosition.x,
+        targetInitialPosition.x,
+        targetFinalPosition.x,
+        playerInterceptPosition.x,
+      ]
+      let yValues = [
+        playerPosition.y,
+        targetInitialPosition.y,
+        targetFinalPosition.y,
+        playerInterceptPosition.y,
+      ]
+      let xMin = Math.min(...xValues) - 100
+      let xMax = Math.max(...xValues) + 100
+      let yMin = Math.min(...yValues) - 100
+      let yMax = Math.max(...yValues) + 100
+
+      var ctx = document.getElementById('interceptChart').getContext('2d')
+
+      // Destroy the previous chart if it exists
+      if (chart !== null) {
+        chart.destroy()
+      }
+
+      chart = new Chart(ctx, {
+        type: 'scatter',
+        data: {
+          datasets: [
+            {
+              label: 'Intercept Course',
+              borderColor: '#f9f470',
+              data: [playerPosition, playerInterceptPosition],
+              fill: false,
+              showLine: true,
+            },
+            {
+              label: 'Target Course',
+              borderColor: 'rgb(190, 190, 190)',
+              data: [targetInitialPosition, targetFinalPosition],
+              fill: false,
+              showLine: true,
+            },
+          ],
+        },
+        options: {
+          responsive: true, // Add this line to make the chart responsive
+          maintainAspectRatio: false, // Add this line to allow the chart to resize in both dimensions
+          scales: {
+            x: {
+              title: {
+                display: false, // Hide the X label
+              },
+              ticks: {
+                display: false, // Hide the X ticks
+              },
+              min: xMin,
+              max: xMax,
+            },
+            y: {
+              title: {
+                display: false, // Hide the Y label
+              },
+              ticks: {
+                display: false, // Hide the Y ticks
+              },
+              min: yMin,
+              max: yMax,
+            },
+          },
+          plugins: {
+            legend: {
+              display: false, // Add this line to hide the legend
+            },
+            tooltip: {
+              callbacks: {
+                title: function (tooltipItems) {
+                  return chart.data.datasets[tooltipItems[0].datasetIndex].label
+                },
+                label: function (tooltipItem) {
+                  if (tooltipItem.datasetIndex === 0) {
+                    if (tooltipItem.dataIndex === 0) {
+                      return 'Max Speed: ' + maxSpeed + 'km/h'
+                    } else {
+                      return (
+                        'Intercept\nTime: ' +
+                        timeToIntercept.toFixed(1) +
+                        'hr\nDistance: ' +
+                        Math.round(distanceToIntercept) +
+                        'km'
+                      )
+                    }
+                  } else {
+                    if (tooltipItem.dataIndex === 0) {
+                      return (
+                        'Speed: ' +
+                        targetSpeed +
+                        'km/h\nCourse: ' +
+                        targetHeading +
+                        '°\nDistance: ' +
+                        targetDistance +
+                        'km'
+                      )
+                    }
+                  }
+                },
+              },
+            },
+          },
+        },
+      })
     })
 
   document.getElementById('resetButton').addEventListener('click', function () {

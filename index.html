@@ -28,7 +28,7 @@
   </head>
   <body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
 
     <div class="container">
       <img src="images/logo.png" alt="Intercept Calculator" />
@@ -141,7 +141,9 @@
           <h2>Results:</h2>
           <div id="resultsContainer"></div>
           <h2>Chart:</h2>
-          <canvas id="interceptChart"></canvas>
+          <div id="interceptChartContainer">
+            <canvas id="interceptChart"></canvas>
+          </div>
         </div>
       </div>
       <div class="desc">
