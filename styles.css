@@ -284,6 +284,7 @@ input[type='number'] {
   height: 250px;
   border: 2px solid #fff;
   background: url(images/chart_bg.png) no-repeat;
+  background-size: cover;
 }
 
 .desc {

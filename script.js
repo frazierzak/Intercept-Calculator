@@ -429,7 +429,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Reset Functionality
   document.getElementById('resetButton').addEventListener('click', function () {
-    document.getElementById('resultsContainer').innerHTML = ''
+    document.getElementById('resultsContainer').innerHTML = `<p>
+              <strong
+                >WAITING FOR DATA</strong
+              >
+            </p>`
 
     // Destroy the current chart if it exists and initialize a new one
     if (chart !== null) {
