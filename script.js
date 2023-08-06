@@ -273,27 +273,33 @@ document.addEventListener('DOMContentLoaded', function () {
         y: playerInterceptPosition.y + targetDirectionVector.y * 100,
       }
 
+      let backgroundImage = new Image()
+      backgroundImage.src = 'images/chart_bg.png'
+
       chart = new Chart(ctx, {
         type: 'scatter',
         data: {
           datasets: [
             {
               label: 'Intersection Point',
-              backgroundColor: '#f9f470',
-              pointBackgroundColor: '#f9f470',
+              pointBorderColor: '#3a3a3a',
+              pointBackgroundColor: '#3a3a3a',
+              pointBorderWidth: 1,
               data: [playerInterceptPosition],
               showLine: false,
-              pointRadius: 8,
-              pointHoverRadius: 8,
+              pointRadius: 14,
+              pointHoverRadius: 14,
+              pointStyle: 'triangle',
             },
             {
               label: 'Player Position',
-              backgroundColor: '#efefef',
-              pointBackgroundColor: '#efefef',
+              pointBorderColor: '#f9f470',
+              pointBackgroundColor: 'transparent',
+              pointBorderWidth: 6,
               data: [playerPosition],
               showLine: false,
-              pointRadius: 8,
-              pointHoverRadius: 8,
+              pointRadius: 10,
+              pointHoverRadius: 10,
             },
             {
               label: 'Target Position',
@@ -301,8 +307,9 @@ document.addEventListener('DOMContentLoaded', function () {
               pointBackgroundColor: '#b45b5b',
               data: [targetInitialPosition],
               showLine: false,
-              pointRadius: 8,
-              pointHoverRadius: 8,
+              pointRadius: 14,
+              pointHoverRadius: 14,
+              pointStyle: 'rect',
             },
             {
               borderColor: '#f9f470',
@@ -314,7 +321,7 @@ document.addEventListener('DOMContentLoaded', function () {
               borderWidth: 2,
             },
             {
-              borderColor: 'rgb(190, 190, 190)',
+              borderColor: 'rgb(231, 231, 231)',
               data: [targetInitialPosition, targetInterceptContinuation],
               fill: false,
               showLine: true,
@@ -402,6 +409,18 @@ document.addEventListener('DOMContentLoaded', function () {
               },
               titleFont: tooltipFont,
               bodyFont: tooltipFont,
+            },
+            beforeDraw: function (chartInstance, easing) {
+              let ctx = chartInstance.chart.ctx
+              ctx.save()
+              ctx.drawImage(
+                backgroundImage,
+                0,
+                0,
+                chartInstance.chart.width,
+                chartInstance.chart.height
+              )
+              ctx.restore()
             },
           },
         },
