@@ -299,6 +299,20 @@ input[type='number'] {
   text-transform: none;
 }
 
+.desc h3 {
+  margin: 0 0 12px 0;
+}
+
+.desc p a {
+  color: var(--color-yellow);
+  text-decoration: none;
+  font-weight: 900;
+}
+
+.desc p a:hover {
+  text-decoration: underline;
+}
+
 .desc ol {
   padding: 0 20px;
 }
