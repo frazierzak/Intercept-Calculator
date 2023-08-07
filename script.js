@@ -1,17 +1,21 @@
 // Helper functions
+
+// Convert degrees to radians
 const toRadians = (degrees) => degrees * (Math.PI / 180)
+
+// Convert radians to degrees
 const toDegrees = (radians) => radians * (180 / Math.PI)
+
+// Normalize angle to the range [-180, 180)
 const normalizeAngle = (angle) => {
   angle = angle % 360
   return angle >= 180 ? angle - 360 : angle
 }
 
-// Jquery function to open tabs
+// Open the specified tab and scroll to its content
 function openTab(tabName) {
-  $('.tab-content').removeClass('active') // Hide all tab content.
-  $('#' + tabName).addClass('active') // Show the specific tab content with slide-in effect.
-
-  // Scroll to the content with a smooth animation
+  $('.tab-content').removeClass('active')
+  $('#' + tabName).addClass('active')
   $('html, body').animate(
     {
       scrollTop: $('#' + tabName).offset().top,
@@ -20,11 +24,10 @@ function openTab(tabName) {
   )
 }
 
-// Function to handle back-to-top button visibility
+// Show or hide the back-to-top button depending on scroll position
 function handleBackToTopButton() {
   const scrollTop = $(window).scrollTop()
   const windowHeight = $(window).height()
-
   if (scrollTop > windowHeight / 2) {
     $('.back-to-top').addClass('active')
   } else {
@@ -32,15 +35,15 @@ function handleBackToTopButton() {
   }
 }
 
-// Function to scroll back to top when the "BACK TO TOP" button is clicked
+// Scroll back to the top of the page
 function backToTop() {
-  $('html, body').animate({ scrollTop: 0 }, 500) // Scroll to the top with a smooth animation
+  $('html, body').animate({ scrollTop: 0 }, 500)
 }
 
-// Attach a scroll event listener to show/hide the "BACK TO TOP" button
+// Attach a scroll event listener to handle the back-to-top button
 $(window).on('scroll', handleBackToTopButton)
 
-// Function to calculate intercept course
+// Calculate the intercept course based on target and interceptor details
 function calculateInterceptCourse(
   targetBearing,
   targetHeading,
@@ -49,31 +52,29 @@ function calculateInterceptCourse(
 ) {
   let targetBearingRad = toRadians(targetBearing)
   let targetHeadingRad = toRadians(targetHeading)
-
   let a = targetSpeed / maxSpeed
   let b = Math.sin(targetHeadingRad - targetBearingRad)
-
   let interceptAngleRad = Math.asin(a * b)
-
   let interceptCourseRad = targetBearingRad + interceptAngleRad
   let interceptCourse = normalizeAngle(toDegrees(interceptCourseRad))
-
   return interceptCourse
 }
 
-let chart = null // Placeholder to keep track of the current chart
-
+let chart = null // Placeholder for the current chart
 const tooltipFont = {
-  family: 'Barlow', // Change this to the desired font family
-  size: 16, // Change this to the desired font size
-  color: '#000000', // Change this to the desired font color
+  family: 'Barlow',
+  size: 16,
+  color: '#000000',
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+  // Event listener for form submission
   document
     .getElementById('myForm')
     .addEventListener('submit', function (event) {
       event.preventDefault()
+      const imageContainer = document.getElementById('interceptChartContainer')
+      imageContainer.classList.remove('loaded')
 
       // Parsing input values from the form
       let maxSpeed = parseFloat(document.getElementById('speed_self').value)
@@ -92,64 +93,45 @@ document.addEventListener('DOMContentLoaded', function () {
       let desiredTimeToIntercept = parseFloat(
         document.getElementById('desired_time').value
       )
+      let targetCourseLength = parseFloat(
+        document.getElementById('course_length_target').value
+      )
 
-      let interceptCourse, timeToIntercept, distanceToIntercept, requiredSpeed
-
-      // Convert all angles to radians for calculations
+      // 1. Initial Calculations
       let targetBearingRad = toRadians(targetBearing)
       let targetHeadingRad = toRadians(targetHeading)
 
-      // Calculate Intercept based on desired time
+      let timeToDestination
+      if (!isNaN(targetCourseLength) && !isNaN(targetSpeed)) {
+        timeToDestination = targetCourseLength / targetSpeed
+      }
+
+      // 2. Intercept Calculations
+      let distanceToIntercept, requiredSpeed, interceptCourse, timeToIntercept
       if (!isNaN(desiredTimeToIntercept)) {
-        // New position of the target after desiredTimeToIntercept
+        // Intercept based on desired time
         let newTargetX =
           targetDistance * Math.cos(targetBearingRad) +
           targetSpeed * desiredTimeToIntercept * Math.cos(targetHeadingRad)
         let newTargetY =
           targetDistance * Math.sin(targetBearingRad) +
           targetSpeed * desiredTimeToIntercept * Math.sin(targetHeadingRad)
-
-        // Calculate the distance from player to the new target position
         distanceToIntercept = Math.sqrt(
           newTargetX * newTargetX + newTargetY * newTargetY
         )
         requiredSpeed = distanceToIntercept / desiredTimeToIntercept
-
-        if (requiredSpeed > maxSpeed) {
-          document.getElementById(
-            'resultsContainer'
-          ).innerHTML = `<p>Interception is not possible within the given timeframe with current maximum speed.</p>`
-          if (chart !== null) {
-            chart.destroy()
-          }
-          return
-        }
-
-        // Calculate the bearing from player's position to the new target position
         interceptCourse = toDegrees(Math.atan2(newTargetY, newTargetX))
-        if (interceptCourse < 0) {
-          interceptCourse += 360
-        }
-
+        interceptCourse =
+          interceptCourse < 0 ? interceptCourse + 360 : interceptCourse
         timeToIntercept = desiredTimeToIntercept
       } else if (!isNaN(maxSpeed)) {
+        // Intercept based on given maxSpeed
         interceptCourse = calculateInterceptCourse(
           targetBearing,
           targetHeading,
           targetSpeed,
           maxSpeed
         )
-
-        if (interceptCourse === null) {
-          document.getElementById(
-            'resultsContainer'
-          ).innerHTML = `<p>Interception is not possible with current maximum speed.</p>`
-          if (chart !== null) {
-            chart.destroy()
-          }
-          return
-        }
-
         let interceptCourseRad = toRadians(interceptCourse)
         let closingSpeedX =
           maxSpeed * Math.cos(interceptCourseRad) -
@@ -160,19 +142,18 @@ document.addEventListener('DOMContentLoaded', function () {
         let closingSpeed = Math.sqrt(
           closingSpeedX * closingSpeedX + closingSpeedY * closingSpeedY
         )
-
         timeToIntercept = targetDistance / closingSpeed
         distanceToIntercept = timeToIntercept * maxSpeed
         requiredSpeed = distanceToIntercept / timeToIntercept
       } else {
-        // Error handling if neither maxSpeed nor desiredTimeToIntercept are entered
+        // Display error message
         document.getElementById(
           'resultsContainer'
-        ).innerHTML = `<p>Either your Max Speed or Desired Intercept Time must be entered</p>`
+        ).innerHTML = `<p class="waiting">Either your Max Speed or Desired Intercept Time must be entered</p>`
         return
       }
 
-      // Display the results and generate the scatter plot
+      // Display results
       document.getElementById(
         'resultsContainer'
       ).innerHTML = `<p>Intercept Course: <span>${Math.round(
@@ -182,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function () {
 <p>Distance to Intercept: <span>${Math.round(distanceToIntercept)} KM</span></p>
 <p>Speed Required: <span>${Math.round(requiredSpeed)} KM/HR</span></p>`
 
-      // Create a scatter plot showing the player's and target's positions over time
+      // 3. Position Calculations
       let playerPosition = { x: 0, y: 0 }
       let targetInitialPosition = {
         x: targetDistance * Math.cos(toRadians(90 - targetBearing)),
@@ -200,7 +181,6 @@ document.addEventListener('DOMContentLoaded', function () {
             timeToIntercept *
             Math.sin(toRadians(90 - targetHeading)),
       }
-
       let playerInterceptPosition = {
         x:
           requiredSpeed *
@@ -211,8 +191,98 @@ document.addEventListener('DOMContentLoaded', function () {
           timeToIntercept *
           Math.sin(toRadians(90 - interceptCourse)),
       }
+      const playerDirectionVector = {
+        x: playerInterceptPosition.x - playerPosition.x,
+        y: playerInterceptPosition.y - playerPosition.y,
+      }
+      const targetDirectionVector = {
+        x: targetFinalPosition.x - targetInitialPosition.x,
+        y: targetFinalPosition.y - targetInitialPosition.y,
+      }
 
-      // Calculate the maximum and minimum values for the x and y coordinates
+      // 1. Cleanup & Initial Setup
+      // Destroy any existing chart and reset the canvas
+      var ctx = document.getElementById('interceptChart').getContext('2d')
+      if (chart !== null) {
+        chart.destroy()
+        chart = null
+        ctx.canvas.width = ctx.canvas.width
+      }
+
+      // Helper function to create a visible line dataset
+      function createVisibleLineDataset(data, color) {
+        return {
+          borderColor: color,
+          data,
+          fill: false,
+          showLine: true,
+          pointRadius: 0,
+          pointHoverRadius: 0,
+          borderWidth: 2,
+        }
+      }
+
+      // 2. Data Calculations
+      // Calculate positions and other data required for the chart
+      const playerInterceptContinuation = {
+        x: playerInterceptPosition.x + playerDirectionVector.x * 100,
+        y: playerInterceptPosition.y + playerDirectionVector.y * 100,
+      }
+      const targetInterceptContinuation = {
+        x: playerInterceptPosition.x + targetDirectionVector.x * 100,
+        y: playerInterceptPosition.y + targetDirectionVector.y * 100,
+      }
+
+      // Calculate the position of the target after traveling the targetCourseLength
+      let targetEndPoint
+      let showTargetLine = false // A flag to decide whether to show the target's course line
+
+      if (targetSpeed && targetHeading) {
+        if (
+          targetCourseLength &&
+          !isNaN(targetCourseLength) &&
+          timeToDestination
+        ) {
+          targetEndPoint = {
+            x:
+              targetInitialPosition.x +
+              targetSpeed *
+                timeToDestination *
+                Math.cos(toRadians(90 - targetHeading)),
+            y:
+              targetInitialPosition.y +
+              targetSpeed *
+                timeToDestination *
+                Math.sin(toRadians(90 - targetHeading)),
+          }
+          showTargetLine = true // Only show the line if we have a course length
+        } else {
+          // You can adjust this arbitrary multiplier (e.g., 1000) to make the line longer if needed
+          targetEndPoint = {
+            x:
+              targetInitialPosition.x +
+              1000 * Math.cos(toRadians(90 - targetHeading)),
+            y:
+              targetInitialPosition.y +
+              1000 * Math.sin(toRadians(90 - targetHeading)),
+          }
+        }
+      }
+
+      // 3. Checks & Validations
+      // Check if interception is possible before the target changes course
+      if (
+        targetCourseLength &&
+        !isNaN(targetCourseLength) &&
+        timeToIntercept > timeToDestination
+      ) {
+        document.getElementById(
+          'resultsContainer'
+        ).innerHTML = `<p class="waiting">Interception is not possible before the target changes course.</p>`
+        return
+      }
+
+      // Adjust chart's scale and check data for NaN values
       let xValues = [
         playerPosition.x,
         targetInitialPosition.x,
@@ -225,117 +295,145 @@ document.addEventListener('DOMContentLoaded', function () {
         targetFinalPosition.y,
         playerInterceptPosition.y,
       ]
-
+      if (targetEndPoint) {
+        xValues.push(targetEndPoint.x)
+        yValues.push(targetEndPoint.y)
+      }
       let xMin = Math.min(...xValues) - 100
       let xMax = Math.max(...xValues) + 100
       let yMin = Math.min(...yValues) - 100
       let yMax = Math.max(...yValues) + 100
 
-      var ctx = document.getElementById('interceptChart').getContext('2d')
+      console.log('xMin:', xMin)
+      console.log('xMax:', xMax)
+      console.log('yMin:', yMin)
+      console.log('yMax:', yMax)
 
-      // Destroy the previous chart if it exists
-      if (chart !== null) {
-        chart.destroy()
+      if ([xMin, xMax, yMin, yMax].some((value) => isNaN(value))) {
+        console.error('Chart axis bounds contain NaN values')
+        return
       }
 
-      // Calculate the direction vectors for the Interceptor and Target lines
-      const playerDirectionVector = {
-        x: playerInterceptPosition.x - playerPosition.x,
-        y: playerInterceptPosition.y - playerPosition.y,
-      }
-
-      const targetDirectionVector = {
-        x: targetFinalPosition.x - targetInitialPosition.x,
-        y: targetFinalPosition.y - targetInitialPosition.y,
-      }
-
-      // Helper function to create a visible line dataset
-      function createVisibleLineDataset(data, color) {
-        return {
-          borderColor: color,
-          data,
+      // 4. Chart Data Preparation
+      // Prepare the datasets for the chart
+      let datasets = [
+        {
+          label: 'Intersection Point',
+          pointBorderColor: '#3a3a3a',
+          pointBackgroundColor: '#3a3a3a',
+          pointBorderWidth: 1,
+          data: [playerInterceptPosition],
+          showLine: false,
+          pointRadius: 14,
+          pointHoverRadius: 14,
+          pointStyle: 'triangle',
+        },
+        {
+          label: 'Player Position',
+          pointBorderColor: '#f9f470',
+          pointBackgroundColor: 'transparent',
+          pointBorderWidth: 6,
+          pointHoverBorderWidth: 6,
+          data: [playerPosition],
+          showLine: false,
+          pointRadius: 10,
+          pointHoverRadius: 10,
+        },
+        {
+          label: 'Target Position',
+          backgroundColor: '#b45b5b',
+          pointBackgroundColor: '#b45b5b',
+          data: [targetInitialPosition],
+          showLine: false,
+          pointRadius: 14,
+          pointHoverRadius: 14,
+          pointStyle: 'rect',
+        },
+        {
+          borderColor: '#f9f470',
+          data: [playerPosition, playerInterceptPosition], // Stop the line at the intercept point
           fill: false,
           showLine: true,
-          pointRadius: 0, // Hide the points
+          pointRadius: 0,
           pointHoverRadius: 0,
-          borderWidth: 2, // Set the line width as desired
-        }
+          borderWidth: 3,
+        },
+      ]
+
+      // Only add the Target Destination marker if the targetCourseLength is provided.
+      if (targetCourseLength && !isNaN(targetCourseLength)) {
+        datasets.push({
+          label: 'Target Destination', // Add the label for the dataset
+          pointBorderColor: '#b45b5b',
+          pointBackgroundColor: '#b45b5b',
+          pointBorderWidth: 6,
+          pointHoverBorderWidth: 6,
+          data: [targetEndPoint],
+          showLine: false,
+          pointRadius: 10,
+          pointHoverRadius: 10,
+          pointStyle: 'crossRot',
+        })
       }
 
-      // New points for the line continuation after intercept point
-      const playerInterceptContinuation = {
-        x: playerInterceptPosition.x + playerDirectionVector.x * 100,
-        y: playerInterceptPosition.y + playerDirectionVector.y * 100,
+      // Add the dataset for the target's course.
+      datasets.push({
+        borderColor: 'rgb(231, 231, 231)',
+        data: [targetInitialPosition, targetEndPoint],
+        fill: false,
+        showLine: true,
+        pointRadius:
+          targetCourseLength && !isNaN(targetCourseLength) ? [0, 10] : [0, 0],
+        pointHoverRadius:
+          targetCourseLength && !isNaN(targetCourseLength) ? [0, 10] : [0, 0],
+        borderWidth: 3,
+        pointBackgroundColor: 'transparent', // Ensure there's no fill color for the points
+        pointBorderColor: 'transparent', // Ensure there's no border color for the points
+      })
+
+      datasets.forEach((dataset, datasetIndex) => {
+        dataset.data.forEach((point, pointIndex) => {
+          if (isNaN(point.x) || isNaN(point.y)) {
+            console.log(
+              `NaN found in dataset ${datasetIndex} at point ${pointIndex}.`
+            )
+            console.log(point)
+          }
+        })
+      })
+
+      if (
+        datasets.some((dataset) =>
+          dataset.data.some((point) => isNaN(point.x) || isNaN(point.y))
+        )
+      ) {
+        console.error('Chart data contains NaN values')
+        return
       }
 
-      const targetInterceptContinuation = {
-        x: playerInterceptPosition.x + targetDirectionVector.x * 100,
-        y: playerInterceptPosition.y + targetDirectionVector.y * 100,
-      }
+      // 5. Chart Rendering
+      // Draw the chart
 
-      // After drawing the chart
-      const imageContainer = document.getElementById('interceptChartContainer')
       imageContainer.classList.add('loaded')
 
+      // Create the chart (provided there were no errors)
       chart = new Chart(ctx, {
         type: 'scatter',
         data: {
-          datasets: [
-            {
-              label: 'Intersection Point',
-              pointBorderColor: '#3a3a3a',
-              pointBackgroundColor: '#3a3a3a',
-              pointBorderWidth: 1,
-              data: [playerInterceptPosition],
-              showLine: false,
-              pointRadius: 14,
-              pointHoverRadius: 14,
-              pointStyle: 'triangle',
-            },
-            {
-              label: 'Player Position',
-              pointBorderColor: '#f9f470',
-              pointBackgroundColor: 'transparent',
-              pointBorderWidth: 6,
-              pointHoverBorderWidth: 6,
-              data: [playerPosition],
-              showLine: false,
-              pointRadius: 10,
-              pointHoverRadius: 10,
-            },
-            {
-              label: 'Target Position',
-              backgroundColor: '#b45b5b',
-              pointBackgroundColor: '#b45b5b',
-              data: [targetInitialPosition],
-              showLine: false,
-              pointRadius: 14,
-              pointHoverRadius: 14,
-              pointStyle: 'rect',
-            },
-            {
-              borderColor: '#f9f470',
-              data: [playerPosition, playerInterceptContinuation],
-              fill: false,
-              showLine: true,
-              pointRadius: 0,
-              pointHoverRadius: 0,
-              borderWidth: 3,
-            },
-            {
-              borderColor: 'rgb(231, 231, 231)',
-              data: [targetInitialPosition, targetInterceptContinuation],
-              fill: false,
-              showLine: true,
-              pointRadius: 0,
-              pointHoverRadius: 0,
-              borderWidth: 3,
-            },
-          ],
+          datasets: datasets,
         },
         options: {
+          layout: {
+            padding: {
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+            },
+          },
           responsive: true,
           maintainAspectRatio: false,
+          aspectRatio: 1,
           scales: {
             x: {
               title: {
@@ -373,15 +471,18 @@ document.addEventListener('DOMContentLoaded', function () {
             tooltip: {
               callbacks: {
                 title: function (tooltipItems) {
-                  const datasetLabel = tooltipItems[0].dataset.label
+                  const datasetLabel = tooltipItems[0]?.dataset?.label
                   if (datasetLabel === 'Player Position') {
                     return 'Detachment Starting Position'
                   } else if (datasetLabel === 'Target Position') {
                     return 'Target Starting Position'
                   } else if (datasetLabel === 'Intersection Point') {
                     return 'Intercept Point'
+                  } else if (datasetLabel === 'Target Destination') {
+                    return 'Target Destination' // Return the label for "Target Destination"
+                  } else {
+                    return '' // Default title if no matching label is found
                   }
-                  return ''
                 },
                 label: function (tooltipItem) {
                   const datasetLabel = tooltipItem.dataset.label
@@ -406,6 +507,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         Math.round(distanceToIntercept) +
                         ' KM',
                     ]
+                  } else if (datasetLabel === 'Target Destination') {
+                    const timeToReach = targetCourseLength / targetSpeed
+                    return [
+                      'Length: ' + targetCourseLength.toFixed(0) + ' km', // Add Length information
+                      'Time to Reach: ' + timeToReach.toFixed(1) + ' HR', // Add Time to Reach information
+                    ]
                   }
                 },
               },
@@ -429,7 +536,7 @@ document.addEventListener('DOMContentLoaded', function () {
       })
     })
 
-  // Reset Functionality
+  // Reset functionality
   document.getElementById('resetButton').addEventListener('click', function () {
     document.getElementById(
       'resultsContainer'
@@ -437,7 +544,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const imageContainer = document.getElementById('interceptChartContainer')
     imageContainer.classList.remove('loaded')
 
-    // Destroy the current chart if it exists and initialize a new one
     if (chart !== null) {
       chart.destroy()
       chart = new Chart(

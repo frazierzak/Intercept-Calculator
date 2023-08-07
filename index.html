@@ -124,6 +124,17 @@
                 placeholder="e.g. 10"
                 step="0.1"
               />
+
+              <div class="input-wrapper">
+                <i class="fa-solid fa-clock"></i>
+                <label for="desired_time">Target's Course Length (KM):</label>
+              </div>
+              <input
+                type="number"
+                id="course_length_target"
+                placeholder="1005"
+                step="1"
+              />
             </div>
             <div class="buttons">
               <button type="submit" class="submit-button">Run</button>
@@ -168,7 +179,8 @@
           <p>
             For a successful <strong>INTERCEPT</strong>, ensure you have the
             target's <strong>location</strong> relative to your position, their
-            <strong>heading</strong>, and their <strong>speed</strong>.
+            <strong>heading</strong>, their <strong>speed</strong>, and the
+            <strong>course length</strong> they are currently traveling.
           </p>
           <h3>What is this?</h3>
           <p>
@@ -177,7 +189,7 @@
               href="https://store.steampowered.com/app/1434950/HighFleet/"
               title="HighFleet on Steam"
               >HighFleet</a
-            >. Plug in data provided by radio decoded messages to calcuate the
+            >. Plug in data provided by radio decoded messages to calculate the
             intercept course.
           </p>
           <h3>Steps</h3>
@@ -185,9 +197,9 @@
             <li>Input your detachment's max speed. This is a required step.</li>
             <li>Enter the target's speed. This is mandatory.</li>
             <li>
-              Determine the target's direction on your compass. Utilize the
-              ruler; click on your position and drag to the target's location to
-              receive this bearing. This step is compulsory.
+              Determine the target's direction relative to your compass. Utilize
+              the ruler; click on your position and drag to the target's
+              location to receive this bearing. This step is compulsory.
             </li>
             <li>
               Input the target's current heading. If the heading is unknown, but
@@ -200,8 +212,18 @@
               assist in gauging this distance. This is a required step.
             </li>
             <li>
-              If you wish, specify a desired time for the intercept. Patience
-              can often be a strategic advantage.
+              Optionally, you can specify a desired time for the intercept. This
+              allows you to plan strategically, as patience can often be an
+              advantage. It can be particularly helpful for ensuring a nighttime
+              interception, if needed.
+            </li>
+            <li>
+              If you have access to the target's course length, you can enter it
+              in the form. This information can be obtained by measuring the
+              distance from the target's starting point to their destination
+              city. Providing this optional input will help determine if your
+              current detachment can reach the target before they change
+              directions.
             </li>
             <li>
               Click <strong>RUN</strong> to derive the intercept course. Utilize
@@ -219,77 +241,70 @@
               <i class="fa-solid fa-calculator"></i> Math Details
               <i class="fa-solid fa-calculator"></i>
             </h2>
-
-            <h3>1. Convert Bearings and Headings to Radians:</h3>
+            <h3>1. Intercept Course Calculation:</h3>
             <p>
-              Before performing trigonometric calculations, angles (bearings and
-              headings) are converted from degrees to radians.
+              The intercept course blends your bearing towards the target and
+              the target's heading. This amalgamation helps in determining the
+              optimal heading to successfully intercept the target.
             </p>
             <pre>
 <code>
-Angle in Radians = Angle in Degrees * (π / 180)
+Intercept Course = atan2((targetSpeed * sin(targetHeading)) + (maxSpeed * sin(targetBearing)), 
+                         (targetSpeed * cos(targetHeading)) + (maxSpeed * cos(targetBearing)))
 </code>
-</pre>
-
-            <h3>2. Intercept Course Calculation:</h3>
+    </pre>
+            <h3>2. Time to Intercept Calculation:</h3>
             <p>
-              The intercept course is calculated based on the target's relative
-              bearing, heading, and speed, combined with your maximum speed.
-            </p>
-            <pre>
-<code>
-Intercept Angle (in Radians) = asin((targetSpeed/maxSpeed) * sin(targetHeading - targetBearing))
-Intercept Course (in Radians) = targetBearing (in Radians) + Intercept Angle
-</code>
-</pre>
-
-            <h3>3. Time to Intercept Calculation:</h3>
-            <p>
-              The time to intercept depends on the relative speeds and the
-              target's distance.
+              The time to intercept is gauged by dividing the distance to the
+              target by the closing speed. An additional check is done to
+              determine if the interception is possible before the target
+              reaches its destination.
             </p>
             <pre>
 <code>
 Time to Intercept = targetDistance / closingSpeed
 </code>
-</pre>
-
-            <h3>4. Distance to Intercept Calculation:</h3>
+    </pre>
+            <h3>3. Distance to Intercept Calculation:</h3>
             <p>
-              The distance to intercept is determined based on your speed and
-              the time taken to intercept.
+              In scenarios where the desired time to intercept isn't provided,
+              the distance is essentially the path you'd cover, considering your
+              max speed and the time to intercept.
             </p>
             <pre>
 <code>
 Distance to Intercept = maxSpeed * timeToIntercept
 </code>
-</pre>
-
-            <h3>5. Required Speed Calculation:</h3>
+    </pre>
+            <h3>4. Required Speed Calculation:</h3>
             <p>
-              The required speed to intercept the target is dependent on the
-              distance to intercept and the desired time.
+              The required speed depends on the desired time to intercept. If
+              provided, the speed needed to intercept the target within the
+              specified time is calculated. An additional check is added to
+              ensure the required speed doesn't exceed the maximum speed.
             </p>
             <pre>
 <code>
-Required Speed = distanceToIntercept / desiredTimeToIntercept
+Required Speed = Distance to Intercept / desiredTimeToIntercept
+Required Speed = Distance to Intercept / timeToIntercept (if desired time isn't specified)
 </code>
-</pre>
-
+    </pre>
+            <h3>5. Target's Time to Destination Calculation:</h3>
             <p>
-              If the desired time isn't provided, you're presumed to be moving
-              at max speed to intercept the target swiftly.
+              The time it takes for the target to reach its destination is
+              computed by dividing the target's course length by its speed. This
+              is important as it ensures that the interception occurs before the
+              target reaches its destination.
             </p>
             <pre>
 <code>
-Required Speed = Distance to Intercept / timeToIntercept
+Time to Destination = targetCourseLength / targetSpeed
 </code>
-</pre>
-
+    </pre>
             <p>
               Remember, trigonometric functions in these formulas (like sin,
-              cos, asin) require angles in radians, not degrees. In the script,
-              we've utilized helper functions to toggle between degrees and
+              cos, atan2) require angles in radians, not degrees. In the script,
+              I've utilized helper functions to toggle between degrees and
               radians as necessary.
             </p>
           </div>
