@@ -65,7 +65,7 @@ let chart = null // Placeholder to keep track of the current chart
 
 const tooltipFont = {
   family: 'Barlow', // Change this to the desired font family
-  size: 12, // Change this to the desired font size
+  size: 16, // Change this to the desired font size
   color: '#000000', // Change this to the desired font color
 }
 
@@ -273,8 +273,9 @@ document.addEventListener('DOMContentLoaded', function () {
         y: playerInterceptPosition.y + targetDirectionVector.y * 100,
       }
 
-      let backgroundImage = new Image()
-      backgroundImage.src = 'images/chart_bg.png'
+      // After drawing the chart
+      const imageContainer = document.getElementById('interceptChartContainer')
+      imageContainer.classList.add('loaded')
 
       chart = new Chart(ctx, {
         type: 'scatter',
@@ -296,6 +297,7 @@ document.addEventListener('DOMContentLoaded', function () {
               pointBorderColor: '#f9f470',
               pointBackgroundColor: 'transparent',
               pointBorderWidth: 6,
+              pointHoverBorderWidth: 6,
               data: [playerPosition],
               showLine: false,
               pointRadius: 10,
@@ -318,7 +320,7 @@ document.addEventListener('DOMContentLoaded', function () {
               showLine: true,
               pointRadius: 0,
               pointHoverRadius: 0,
-              borderWidth: 2,
+              borderWidth: 3,
             },
             {
               borderColor: 'rgb(231, 231, 231)',
@@ -327,7 +329,7 @@ document.addEventListener('DOMContentLoaded', function () {
               showLine: true,
               pointRadius: 0,
               pointHoverRadius: 0,
-              borderWidth: 2,
+              borderWidth: 3,
             },
           ],
         },
@@ -429,11 +431,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Reset Functionality
   document.getElementById('resetButton').addEventListener('click', function () {
-    document.getElementById('resultsContainer').innerHTML = `<p>
-              <strong
-                >WAITING FOR DATA</strong
-              >
-            </p>`
+    document.getElementById(
+      'resultsContainer'
+    ).innerHTML = `<p class="waiting">Waiting for Data</p>`
+    const imageContainer = document.getElementById('interceptChartContainer')
+    imageContainer.classList.remove('loaded')
 
     // Destroy the current chart if it exists and initialize a new one
     if (chart !== null) {

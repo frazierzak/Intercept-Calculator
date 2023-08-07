@@ -136,13 +136,13 @@
         <div class="results-wrapper">
           <h2>INTERCEPT</h2>
           <div id="resultsContainer">
-            <p>
-              <strong>WAITING FOR DATA</strong>
-            </p>
+            <p class="waiting">Waiting for Data</p>
           </div>
           <h2>VISUAL</h2>
           <div id="interceptChartContainer">
             <canvas id="interceptChart"></canvas>
+            <div class="bg" id="initialImage"></div>
+            <div class="bg" id="finalImage"></div>
           </div>
         </div>
       </div>
@@ -219,52 +219,65 @@
               <i class="fa-solid fa-calculator"></i> Math Details
               <i class="fa-solid fa-calculator"></i>
             </h2>
-            <h3>1. Intercept Course Calculation:</h3>
+
+            <h3>1. Convert Bearings and Headings to Radians:</h3>
             <p>
-              The intercept course blends your bearing towards the target and
-              the target's heading. This amalgamation helps in determining the
-              optimal heading to successfully intercept the target.
+              Before performing trigonometric calculations, angles (bearings and
+              headings) are converted from degrees to radians.
             </p>
             <pre>
 <code>
-Intercept Course = atan2((targetSpeed * sin(targetHeading)) + (maxSpeed * sin(targetBearing)), 
-                         (targetSpeed * cos(targetHeading)) + (maxSpeed * cos(targetBearing)))
+Angle in Radians = Angle in Degrees * (π / 180)
 </code>
 </pre>
-            <h3>2. Time to Intercept Calculation:</h3>
+
+            <h3>2. Intercept Course Calculation:</h3>
             <p>
-              The time to intercept is gauged by dividing the distance to the
-              target by the closing speed.
+              The intercept course is calculated based on the target's relative
+              bearing, heading, and speed, combined with your maximum speed.
+            </p>
+            <pre>
+<code>
+Intercept Angle (in Radians) = asin((targetSpeed/maxSpeed) * sin(targetHeading - targetBearing))
+Intercept Course (in Radians) = targetBearing (in Radians) + Intercept Angle
+</code>
+</pre>
+
+            <h3>3. Time to Intercept Calculation:</h3>
+            <p>
+              The time to intercept depends on the relative speeds and the
+              target's distance.
             </p>
             <pre>
 <code>
 Time to Intercept = targetDistance / closingSpeed
 </code>
 </pre>
-            <h3>3. Distance to Intercept Calculation:</h3>
+
+            <h3>4. Distance to Intercept Calculation:</h3>
             <p>
-              In scenarios where the desired time to intercept isn't provided,
-              the distance is essentially the path you'd cover, considering your
-              max speed and the time to intercept.
+              The distance to intercept is determined based on your speed and
+              the time taken to intercept.
             </p>
             <pre>
 <code>
 Distance to Intercept = maxSpeed * timeToIntercept
 </code>
 </pre>
-            <h3>4. Required Speed Calculation:</h3>
+
+            <h3>5. Required Speed Calculation:</h3>
             <p>
-              The required speed depends on the desired time to intercept. If
-              provided, the speed needed to intercept the target within the
-              specified time is calculated.
+              The required speed to intercept the target is dependent on the
+              distance to intercept and the desired time.
             </p>
             <pre>
 <code>
-Required Speed = Distance to Intercept / desiredTimeToIntercept
+Required Speed = distanceToIntercept / desiredTimeToIntercept
 </code>
 </pre>
+
             <p>
-              If the desired time isn't specified, you're presumed to be moving
+              If the desired time isn't provided, you're presumed to be moving
               at max speed to intercept the target swiftly.
             </p>
             <pre>
@@ -272,9 +285,10 @@ Required Speed = Distance to Intercept / desiredTimeToIntercept
 Required Speed = Distance to Intercept / timeToIntercept
 </code>
 </pre>
+
             <p>
               Remember, trigonometric functions in these formulas (like sin,
-              cos, atan2) require angles in radians, not degrees. In the script,
+              cos, asin) require angles in radians, not degrees. In the script,
               we've utilized helper functions to toggle between degrees and
               radians as necessary.
             </p>
