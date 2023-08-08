@@ -76,7 +76,14 @@ function calculateInterceptCourse(
   let targetHeadingRad = toRadians(targetHeading)
   let a = targetSpeed / maxSpeed
   let b = Math.sin(targetHeadingRad - targetBearingRad)
-  let interceptAngleRad = Math.asin(a * b)
+  let argumentForAsin = a * b
+
+  // Check if the argument for Math.asin is valid
+  if (argumentForAsin < -1 || argumentForAsin > 1) {
+    return NaN
+  }
+
+  let interceptAngleRad = Math.asin(argumentForAsin)
   let interceptCourseRad = targetBearingRad + interceptAngleRad
   let interceptCourse = normalizeAngle(toDegrees(interceptCourseRad))
   return interceptCourse
@@ -204,6 +211,18 @@ document.addEventListener('DOMContentLoaded', function () {
           targetSpeed,
           maxSpeed
         )
+
+        if (isNaN(interceptCourse)) {
+          if (chart !== null) {
+            chart.destroy()
+            chart = null
+          }
+          document.getElementById(
+            'resultsContainer'
+          ).innerHTML = `<p class="waiting">Interception is not possible with the given max speed.</p>`
+          return
+        }
+
         let interceptCourseRad = toRadians(interceptCourse)
         let closingSpeedX =
           maxSpeed * Math.cos(interceptCourseRad) -
