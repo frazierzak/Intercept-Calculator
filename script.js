@@ -93,7 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const clouds = document.querySelectorAll('.cloud')
 
   clouds.forEach((cloud) => {
-    const randomDuration = Math.random() * 60 + 300 // Random duration between 300s and 360s
     const cloudWidth = cloud.clientWidth
     const cloudHeight = cloud.clientHeight
 
@@ -116,6 +115,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Calculate the new X and Y positions after moving along the angle
     const newX = randomStartX + distance * Math.cos(radianAngle)
     const newY = randomStartY - distance * Math.sin(radianAngle)
+
+    const randomDuration = Math.random() * 60 + 300 // Random duration between 300s and 360s
 
     cloud.style.left = `${randomStartX}px`
     cloud.style.top = `${randomStartY}px`
