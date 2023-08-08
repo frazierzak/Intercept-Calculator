@@ -89,6 +89,44 @@ const tooltipFont = {
   color: '#000000',
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+  const clouds = document.querySelectorAll('.cloud')
+
+  clouds.forEach((cloud) => {
+    const randomDuration = Math.random() * 60 + 300 // Random duration between 300s and 360s
+    const cloudWidth = cloud.clientWidth
+    const cloudHeight = cloud.clientHeight
+
+    // Generate a random scale between 1.3 (130%) and 1 (100%)
+    const randomScale = 1 + Math.random() * 0.3
+
+    const randomStartX =
+      Math.random() * (window.innerWidth - cloudWidth * randomScale) // Random X position
+    const randomStartY =
+      Math.random() * (window.innerHeight - cloudHeight * randomScale) // Random Y position
+
+    const angle = 45 // Angle in degrees (NE direction)
+    const radianAngle = angle * (Math.PI / 180) // Convert to radians
+
+    // Calculate the distance to move along the angle
+    const distance = Math.abs(
+      (cloudWidth * randomScale) / Math.cos(radianAngle)
+    )
+
+    // Calculate the new X and Y positions after moving along the angle
+    const newX = randomStartX + distance * Math.cos(radianAngle)
+    const newY = randomStartY - distance * Math.sin(radianAngle)
+
+    cloud.style.left = `${randomStartX}px`
+    cloud.style.top = `${randomStartY}px`
+    cloud.style.transform = `scale(${randomScale})` // Apply the random scale
+    cloud.style.animationDuration = `${randomDuration}s`
+
+    // Apply animation to move the cloud along the calculated angle
+    cloud.style.animation = `moveCloud ${randomDuration}s linear infinite`
+  })
+})
+
 document.addEventListener('DOMContentLoaded', function () {
   // Event listener for form submission
   document

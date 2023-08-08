@@ -24,19 +24,92 @@ input[type='number'] {
 
 body {
   font-family: 'Barlow', sans-serif;
-  margin: 20px;
+  margin: 0;
+  overflow-y: auto;
   background-color: var(--color-black);
   color: var(--color-white);
   letter-spacing: 1px;
   text-transform: uppercase;
   font-weight: 500;
-  background-image: url(images/bg.jpg);
+  /* background-image: url(images/bg.jpg); */
+  /* background-size: cover; */
+}
+
+.background {
+  width: 100vw;
+  height: 100vh;
+  position: fixed; /* Fixed position to make it static */
+  top: 0;
+  left: 0;
+  background-image: url('images/bg.png');
   background-size: cover;
+  background-position: center;
+  /* overflow: hidden; Hide overflowing clouds */
+  z-index: -3;
+}
+
+.scanlines::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.2) 1px,
+    transparent 1px
+  );
+  background-size: 100% 3px; /* Adjust scanline height as needed */
+  z-index: -1;
+}
+
+.clouds {
+  position: fixed; /* Fixed position for clouds */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Allow interactions with content below */
+  z-index: -1; /* Place behind other content */
+}
+
+.cloud {
+  position: absolute;
+  background-size: cover;
+  animation: moveCloud 60s linear infinite;
+}
+
+.cloud1 {
+  width: 621px;
+  height: 424px;
+  background-image: url('images/cloud1.png');
+}
+
+.cloud2 {
+  width: 620px;
+  height: 437px;
+  background-image: url('images/cloud2.png');
+}
+
+.cloud3 {
+  width: 442px;
+  height: 311px;
+  background-image: url('images/cloud3.png');
+}
+
+@keyframes moveCloud {
+  from {
+    transform: translateX(-100%) translateY(100%);
+  }
+  to {
+    transform: translateX(calc(100vw + 200px)) translateY(-140px);
+  }
 }
 
 .container {
   max-width: 700px;
-  margin: 0 auto 20px auto;
+  margin: 20px auto;
   background-color: var(--color-grey);
   padding: 20px;
   border-radius: 5px;
@@ -483,7 +556,7 @@ footer {
   color: var(--color-white);
   padding: 20px;
   max-width: 700px;
-  margin: 0 auto;
+  margin: 0 auto 20px;
   border-radius: 5px;
 }
 
