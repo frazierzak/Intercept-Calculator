@@ -43,6 +43,28 @@ function backToTop() {
 // Attach a scroll event listener to handle the back-to-top button
 $(window).on('scroll', handleBackToTopButton)
 
+//Tooltip Code
+document.querySelectorAll('.tooltip-container').forEach(function (container) {
+  container.addEventListener('click', function () {
+    let tooltip = container.querySelector('.tooltip-text')
+    if (tooltip.style.visibility === 'visible') {
+      tooltip.style.visibility = 'hidden'
+      tooltip.style.opacity = '0'
+    } else {
+      tooltip.style.visibility = 'visible'
+      tooltip.style.opacity = '1'
+    }
+  })
+})
+
+// Disable scroll wheel behavior on all inputs
+var inputs = document.querySelectorAll('input')
+inputs.forEach(function (input) {
+  input.addEventListener('wheel', function (event) {
+    event.preventDefault()
+  })
+})
+
 // Calculate the intercept course based on target and interceptor details
 function calculateInterceptCourse(
   targetBearing,
@@ -120,6 +142,17 @@ document.addEventListener('DOMContentLoaded', function () {
           newTargetX * newTargetX + newTargetY * newTargetY
         )
         requiredSpeed = distanceToIntercept / desiredTimeToIntercept
+        // Check if the required speed is greater than max speed
+        if (requiredSpeed > maxSpeed) {
+          if (chart !== null) {
+            chart.destroy()
+            chart = null
+          }
+          document.getElementById(
+            'resultsContainer'
+          ).innerHTML = `<p class="waiting">Interception is not possible with the given max speed.</p>`
+          return
+        }
         interceptCourse = toDegrees(Math.atan2(newTargetY, newTargetX))
         interceptCourse =
           interceptCourse < 0 ? interceptCourse + 360 : interceptCourse

@@ -31,17 +31,32 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
 
     <div class="container">
-      <img src="images/logo.png" alt="HighFleet Intercept Calculator" />
+      <img
+        src="images/logo.png"
+        alt="HighFleet Intercept Calculator"
+        class="logo"
+      />
       <div class="form-container">
         <div class="form-wrapper">
           <form id="myForm">
             <h2>DATA</h2>
-            <!-- Your form fields go here -->
             <div class="required">
               <div class="text">REQUIRED</div>
               <div class="input-wrapper">
                 <i class="fa-solid fa-gauge"></i>
-                <label for="speed_self">Detachment's Max Speed (km/h):</label>
+                <label for="speed_self">
+                  Detachment's Max Speed (km/h)
+                  <div class="tooltip-container">
+                    <img
+                      src="images/circle-info-solid.svg"
+                      alt="Info"
+                      class="info-icon"
+                    />
+                    <span class="tooltip-text"
+                      >The maximum speed your detachment can move at.</span
+                    >
+                  </div>
+                </label>
               </div>
               <input
                 type="number"
@@ -55,6 +70,16 @@
               <div class="input-wrapper">
                 <i class="fa-solid fa-gauge"></i>
                 <label for="speed_target">Target's Speed (km/h):</label>
+                <div class="tooltip-container">
+                  <img
+                    src="images/circle-info-solid.svg"
+                    alt="Info"
+                    class="info-icon"
+                  />
+                  <span class="tooltip-text"
+                    >The speed at which the target is moving.</span
+                  >
+                </div>
               </div>
               <input
                 type="number"
@@ -70,6 +95,17 @@
                 <label for="direction_target_from_you"
                   >Direction towards Target (°):</label
                 >
+                <div class="tooltip-container">
+                  <img
+                    src="images/circle-info-solid.svg"
+                    alt="Info"
+                    class="info-icon"
+                  />
+                  <span class="tooltip-text"
+                    >The current direction from your detachment towards the
+                    target.</span
+                  >
+                </div>
               </div>
               <input
                 type="number"
@@ -85,6 +121,17 @@
                 <label for="direction_target_heading"
                   >Target's Heading (°):</label
                 >
+                <div class="tooltip-container">
+                  <img
+                    src="images/circle-info-solid.svg"
+                    alt="Info"
+                    class="info-icon"
+                  />
+                  <span class="tooltip-text"
+                    >The direction in which the target is currently
+                    moving.</span
+                  >
+                </div>
               </div>
               <input
                 type="number"
@@ -98,12 +145,23 @@
               <div class="input-wrapper">
                 <i class="fa-solid fa-ruler"></i>
                 <label for="distance_target">Distance to target (km):</label>
+                <div class="tooltip-container">
+                  <img
+                    src="images/circle-info-solid.svg"
+                    alt="Info"
+                    class="info-icon"
+                  />
+                  <span class="tooltip-text"
+                    >The current distance from your detachment to the
+                    target.</span
+                  >
+                </div>
               </div>
               <input
                 type="number"
                 id="distance_target"
                 name="distance_target"
-                placeholder="875"
+                placeholder="e.g. 875"
                 required
                 step="1"
               />
@@ -113,27 +171,50 @@
 
               <div class="input-wrapper">
                 <i class="fa-solid fa-clock"></i>
+                <label for="course_length_target"
+                  >Target's Course Length (KM):</label
+                >
+                <div class="tooltip-container">
+                  <img
+                    src="images/circle-info-solid.svg"
+                    alt="Info"
+                    class="info-icon"
+                  />
+                  <span class="tooltip-text"
+                    >The total distance the target intends to travel.</span
+                  >
+                </div>
+              </div>
+              <input
+                type="number"
+                id="course_length_target"
+                placeholder="e.g. 1005"
+                step="1"
+              />
+
+              <div class="input-wrapper">
+                <i class="fa-solid fa-clock"></i>
                 <label for="desired_time"
                   >Desired Time to intercept (hr):</label
                 >
+                <div class="tooltip-container">
+                  <img
+                    src="images/circle-info-solid.svg"
+                    alt="Info"
+                    class="info-icon"
+                  />
+                  <span class="tooltip-text"
+                    >The time within which you wish to intercept the
+                    target.</span
+                  >
+                </div>
               </div>
               <input
                 type="number"
                 id="desired_time"
                 name="desired_time"
-                placeholder="e.g. 10"
+                placeholder="e.g. 4.2"
                 step="0.1"
-              />
-
-              <div class="input-wrapper">
-                <i class="fa-solid fa-clock"></i>
-                <label for="desired_time">Target's Course Length (KM):</label>
-              </div>
-              <input
-                type="number"
-                id="course_length_target"
-                placeholder="1005"
-                step="1"
               />
             </div>
             <div class="buttons">
@@ -247,12 +328,8 @@
               the target's heading. This amalgamation helps in determining the
               optimal heading to successfully intercept the target.
             </p>
-            <pre>
-<code>
-Intercept Course = atan2((targetSpeed * sin(targetHeading)) + (maxSpeed * sin(targetBearing)), 
-                         (targetSpeed * cos(targetHeading)) + (maxSpeed * cos(targetBearing)))
-</code>
-    </pre>
+            <pre><code>Intercept Course = atan2((targetSpeed * sin(targetHeading)) + (maxSpeed * sin(targetBearing)), 
+(targetSpeed * cos(targetHeading)) + (maxSpeed * cos(targetBearing)))</code></pre>
             <h3>2. Time to Intercept Calculation:</h3>
             <p>
               The time to intercept is gauged by dividing the distance to the
@@ -260,22 +337,14 @@ Intercept Course = atan2((targetSpeed * sin(targetHeading)) + (maxSpeed * sin(ta
               determine if the interception is possible before the target
               reaches its destination.
             </p>
-            <pre>
-<code>
-Time to Intercept = targetDistance / closingSpeed
-</code>
-    </pre>
+            <pre><code>Time to Intercept = targetDistance / closingSpeed</code></pre>
             <h3>3. Distance to Intercept Calculation:</h3>
             <p>
               In scenarios where the desired time to intercept isn't provided,
               the distance is essentially the path you'd cover, considering your
               max speed and the time to intercept.
             </p>
-            <pre>
-<code>
-Distance to Intercept = maxSpeed * timeToIntercept
-</code>
-    </pre>
+            <pre><code>Distance to Intercept = maxSpeed * timeToIntercept</code></pre>
             <h3>4. Required Speed Calculation:</h3>
             <p>
               The required speed depends on the desired time to intercept. If
@@ -283,12 +352,8 @@ Distance to Intercept = maxSpeed * timeToIntercept
               specified time is calculated. An additional check is added to
               ensure the required speed doesn't exceed the maximum speed.
             </p>
-            <pre>
-<code>
-Required Speed = Distance to Intercept / desiredTimeToIntercept
-Required Speed = Distance to Intercept / timeToIntercept (if desired time isn't specified)
-</code>
-    </pre>
+            <pre><code>Required Speed = Distance to Intercept / desiredTimeToIntercept
+Required Speed = Distance to Intercept / timeToIntercept (if desired time isn't specified)</code></pre>
             <h3>5. Target's Time to Destination Calculation:</h3>
             <p>
               The time it takes for the target to reach its destination is
@@ -296,11 +361,7 @@ Required Speed = Distance to Intercept / timeToIntercept (if desired time isn't 
               is important as it ensures that the interception occurs before the
               target reaches its destination.
             </p>
-            <pre>
-<code>
-Time to Destination = targetCourseLength / targetSpeed
-</code>
-    </pre>
+            <pre><code>Time to Destination = targetCourseLength / targetSpeed</code></pre>
             <p>
               Remember, trigonometric functions in these formulas (like sin,
               cos, atan2) require angles in radians, not degrees. In the script,

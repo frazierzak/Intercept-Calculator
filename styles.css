@@ -15,6 +15,13 @@
   padding: 0;
 }
 
+/* Style to show number pad on mobile devices */
+input[type='number'] {
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
 body {
   font-family: 'Barlow', sans-serif;
   margin: 20px;
@@ -53,7 +60,7 @@ body {
   padding: 20px;
 }
 
-img {
+img.logo {
   width: 100%;
   max-width: 472px;
   margin-bottom: 20px;
@@ -71,7 +78,6 @@ h2 {
 
 #form-container p,
 .input-wrapper {
-  margin: 0 0 10px 0;
   display: flex;
   align-items: center;
 }
@@ -82,8 +88,27 @@ form {
   padding: 20px;
 }
 
+.input-wrapper {
+  margin: 0 0 10px 0;
+}
+
+.input-wrapper i {
+  font-size: 18px;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+.info-icon {
+  height: 21px;
+  width: 21px;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-left: 10px;
+}
+
 label {
-  display: block;
+  display: inline-flex;
+  align-items: center;
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 2px;
@@ -91,9 +116,36 @@ label {
   line-height: 20px;
 }
 
-.input-wrapper i {
-  margin-right: 10px;
-  font-size: 20px;
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  width: 220px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 10px;
+  position: absolute;
+  z-index: 5;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -110px;
+  font-size: 14px;
+  letter-spacing: 1px;
+  line-height: 20px;
+  border: 2px dashed var(--color-dark-grey);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
 }
 
 input[type='number'],
@@ -286,6 +338,9 @@ input[type='number'] {
   letter-spacing: 2px;
   font-weight: 500;
   line-height: 22px;
+  background: #333;
+  padding: 20px;
+  border-radius: 4px;
   animation: fadeAwayAndReturn 1.5s infinite;
 }
 
@@ -361,14 +416,8 @@ input[type='number'] {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 2; /* Chart is at level 2, above the images */
+  z-index: 2;
 }
-
-/* 
-#interceptChart {
-  width: 100% !important;
-  height: 250px !important;
-} */
 
 .desc {
   text-align: left;
