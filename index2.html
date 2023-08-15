@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HighFleet Intercept Course Calculator</title>
+    <link rel="stylesheet" href="styles2.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta property="og:title" content="HighFleet Intercept Course Calculator" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://interceptcourse.app/" />
+    <meta
+      property="og:description"
+      content="An intercept calculator for the video game HighFleet that will give you the best optimal intercept course to the target"
+    />
+    <meta
+      property="og:image"
+      content="https://interceptcourse.app/images/og_image.png"
+    />
+  </head>
+  <body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <div class="background"></div>
+    <div class="scanlines"></div>
+    <div class="clouds"></div>
+    <div class="container">
+      <img
+        src="images/logo.png"
+        alt="HighFleet Intercept Calculator"
+        class="logo"
+      />
+      <div class="form-container">
+        <div class="form-wrapper">
+          <form id="myForm">
+            <h2>DATA</h2>
+            <div class="labels-grid">
+              <div class="icon-and-tooltip">
+                <div class="tooltip-container">
+                  <i class="fa-solid fa-gauge"></i>
+                </div>
+                <div class="tooltip-container">
+                  <img
+                    src="images/circle-info-solid.svg"
+                    alt="Info"
+                    class="info-icon"
+                  />
+                  <span class="tooltip-text"
+                    >The max speed your detachment can go.</span
+                  >
+                </div>
+              </div>
+              <div class="icon-and-tooltip">
+                <div class="tooltip-container">
+                  <img src="images/landed.png" alt="Landed" />
+                </div>
+                <div class="tooltip-container">
+                  <img
+                    src="images/circle-info-solid.svg"
+                    alt="Info"
+                    class="info-icon"
+                  />
+                  <span class="tooltip-text"
+                    >Takes into consideration the duration required for
+                    liftoff.</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="labels-grid">
+              <div class="input-wrapper">
+                <label for="speed_self">Your Max Speed (km/h)</label>
+              </div>
+              <div class="input-wrapper">
+                <label for="isLanded">Landed?</label>
+              </div>
+            </div>
+
+            <div class="inputs-grid">
+              <input
+                type="number"
+                id="speed_self"
+                name="speed_self"
+                placeholder="e.g. 256"
+                step="1"
+                required
+              />
+              <div class="checkbox-container">
+                <input type="checkbox" id="isLanded" name="isLanded" />
+              </div>
+            </div>
+
+            <div class="targetData">
+              <div class="input-wrapper">
+                <i class="fa-solid fa-gauge"></i>
+                <label for="speed_target">Target's Speed (km/h):</label>
+                <div class="tooltip-container">
+                  <img
+                    src="images/circle-info-solid.svg"
+                    alt="Info"
+                    class="info-icon"
+                  />
+                  <span class="tooltip-text"
+                    >The speed at which the target is moving.</span
+                  >
+                </div>
+              </div>
+              <input
+                type="number"
+                id="speed_target"
+                name="speed_target"
+                placeholder="e.g. 110"
+                required
+                step="1"
+              />
+
+              <div class="input-wrapper">
+                <i class="fa-solid fa-compass"></i>
+                <label for="direction_target_from_you"
+                  >Target Bearing (°):</label
+                >
+                <div class="tooltip-container">
+                  <img
+                    src="images/circle-info-solid.svg"
+                    alt="Info"
+                    class="info-icon"
+                  />
+                  <span class="tooltip-text"
+                    >The current direction from your detachment towards the
+                    target.</span
+                  >
+                </div>
+              </div>
+              <input
+                type="number"
+                id="direction_target_from_you"
+                name="direction_target_from_you"
+                placeholder="e.g. 137"
+                required
+                step="1"
+              />
+
+              <div class="input-wrapper">
+                <i class="fa-solid fa-compass"></i>
+                <label for="direction_target_heading"
+                  >Target's Heading (°):</label
+                >
+                <div class="tooltip-container">
+                  <img
+                    src="images/circle-info-solid.svg"
+                    alt="Info"
+                    class="info-icon"
+                  />
+                  <span class="tooltip-text"
+                    >The direction in which the target is currently
+                    moving.</span
+                  >
+                </div>
+              </div>
+              <input
+                type="number"
+                id="direction_target_heading"
+                name="direction_target_heading"
+                placeholder="e.g. 59"
+                required
+                step="1"
+              />
+
+              <div class="input-wrapper">
+                <i class="fa-solid fa-ruler"></i>
+                <label for="distance_target">Distance to target (km):</label>
+                <div class="tooltip-container">
+                  <img
+                    src="images/circle-info-solid.svg"
+                    alt="Info"
+                    class="info-icon"
+                  />
+                  <span class="tooltip-text"
+                    >The current distance from your detachment to the
+                    target.</span
+                  >
+                </div>
+              </div>
+              <input
+                type="number"
+                id="distance_target"
+                name="distance_target"
+                placeholder="e.g. 875"
+                required
+                step="1"
+              />
+            </div>
+
+            <div class="optional" style="display: none">
+              <div class="text">OPTIONAL</div>
+
+              <div class="input-wrapper">
+                <i class="fa-solid fa-clock"></i>
+                <label for="course_length_target"
+                  >Target's Course Length (KM):</label
+                >
+                <div class="tooltip-container">
+                  <img
+                    src="images/circle-info-solid.svg"
+                    alt="Info"
+                    class="info-icon"
+                  />
+                  <span class="tooltip-text"
+                    >The total distance the target intends to travel.</span
+                  >
+                </div>
+              </div>
+              <input
+                type="number"
+                id="course_length_target"
+                placeholder="e.g. 1005"
+                step="1"
+              />
+
+              <div class="input-wrapper">
+                <i class="fa-solid fa-clock"></i>
+                <label for="desired_time"
+                  >Desired Time to intercept (hr):</label
+                >
+                <div class="tooltip-container">
+                  <img
+                    src="images/circle-info-solid.svg"
+                    alt="Info"
+                    class="info-icon"
+                  />
+                  <span class="tooltip-text"
+                    >How many hours later you you wish to intercept the target.
+                    Can accept 1 decimal place.</span
+                  >
+                </div>
+              </div>
+              <input
+                type="number"
+                id="desired_time"
+                name="desired_time"
+                placeholder="e.g. 4.2"
+                step="0.1"
+              />
+            </div>
+            <div class="buttons">
+              <button type="submit" class="submit-button">Run</button>
+              <button type="reset" id="resetButton" class="clear-button">
+                Clear
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="results-wrapper">
+          <h2>INTERCEPT</h2>
+          <div id="resultsContainer">
+            <p class="waiting">Waiting for Data</p>
+          </div>
+          <h2>VISUAL</h2>
+          <!-- <div id="interceptChartContainer">
+            <canvas id="interceptionChart"></canvas>
+            <div class="bg" id="initialImage"></div>
+            <div class="bg" id="finalImage"></div>
+          </div> -->
+          <div id="animationContainer">
+            <div id="interceptor">
+              <div class="arrow"></div>
+            </div>
+
+            <div id="target">
+              <div class="arrow"></div>
+            </div>
+
+            <div id="interceptPoint"></div>
+
+            <svg id="lineContainer"></svg>
+          </div>
+        </div>
+      </div>
+      <div class="desc">
+        <div class="tabs">
+          <button class="tablink" onclick="openTab('howToUse')">
+            How to Use
+          </button>
+          <button class="tablink" onclick="openTab('mathContainer')">
+            Math Details
+          </button>
+        </div>
+        <div id="howToUse" class="content tab-content">
+          <h2>
+            <i class="fas fa-lightbulb"></i> How to use
+            <i class="fas fa-lightbulb"></i>
+          </h2>
+          <h3>Introduction</h3>
+          <p>Greetings, brave Tarkhan.</p>
+          <p>
+            Decoded a radio message and uncertain about the next move? Fret not.
+          </p>
+          <p>
+            For a successful <strong>INTERCEPT</strong>, ensure you have the
+            target's <strong>location</strong> relative to your position, their
+            <strong>heading</strong>, their <strong>speed</strong>, and the
+            <strong>course length</strong> they are currently traveling.
+          </p>
+          <h3>What is this?</h3>
+          <p>
+            This is an intercept calculator for the video game
+            <a
+              href="https://store.steampowered.com/app/1434950/HighFleet/"
+              title="HighFleet on Steam"
+              >HighFleet</a
+            >. Plug in data provided by radio decoded messages to calculate the
+            intercept course.
+          </p>
+          <h3>Steps</h3>
+          <ol>
+            <li>Input your detachment's max speed. This is a required step.</li>
+            <li>Enter the target's speed. This is mandatory.</li>
+            <li>
+              Determine the target's direction relative to your compass. Utilize
+              the ruler; click on your position and drag to the target's
+              location to receive this bearing. This step is compulsory.
+            </li>
+            <li>
+              Input the target's current heading. If the heading is unknown, but
+              you're aware of the target's next city destination, use the ruler.
+              Click on their current position and drag to their next city
+              destination to ascertain the heading. This is an essential step.
+            </li>
+            <li>
+              Indicate the distance between you and the target. The ruler will
+              assist in gauging this distance. This is a required step.
+            </li>
+            <li>
+              Optionally, you can specify a desired time for the intercept. This
+              allows you to plan strategically, as patience can often be an
+              advantage. It can be particularly helpful for ensuring a nighttime
+              interception, if needed.
+            </li>
+            <li>
+              If you have access to the target's course length, you can enter it
+              in the form. This information can be obtained by measuring the
+              distance from the target's starting point to their destination
+              city. Providing this optional input will help determine if your
+              current detachment can reach the target before they change
+              directions.
+            </li>
+            <li>
+              Click <strong>RUN</strong> to derive the intercept course. Utilize
+              the results to set your detachment on an intercept trajectory with
+              the target. Remember, if your intercept point is beyond the
+              target's next stop, the intercept will fail. The calculator will
+              notify you if the intercept isn't feasible.
+            </li>
+          </ol>
+        </div>
+
+        <div id="mathContainer" class="content tab-content">
+          <div class="math">
+            <h2>
+              <i class="fa-solid fa-calculator"></i> Math Details
+              <i class="fa-solid fa-calculator"></i>
+            </h2>
+            <h3>1. Intercept Course Calculation:</h3>
+            <p>
+              The intercept course blends your bearing towards the target and
+              the target's heading. This amalgamation helps in determining the
+              optimal heading to successfully intercept the target.
+            </p>
+            <pre><code>Intercept Course = atan2((targetSpeed * sin(targetHeading)) + (maxSpeed * sin(targetBearing)), 
+(targetSpeed * cos(targetHeading)) + (maxSpeed * cos(targetBearing)))</code></pre>
+            <h3>2. Time to Intercept Calculation:</h3>
+            <p>
+              The time to intercept is gauged by dividing the distance to the
+              target by the closing speed. An additional check is done to
+              determine if the interception is possible before the target
+              reaches its destination.
+            </p>
+            <pre><code>Time to Intercept = targetDistance / closingSpeed</code></pre>
+            <h3>3. Distance to Intercept Calculation:</h3>
+            <p>
+              In scenarios where the desired time to intercept isn't provided,
+              the distance is essentially the path you'd cover, considering your
+              max speed and the time to intercept.
+            </p>
+            <pre><code>Distance to Intercept = maxSpeed * timeToIntercept</code></pre>
+            <h3>4. Required Speed Calculation:</h3>
+            <p>
+              The required speed depends on the desired time to intercept. If
+              provided, the speed needed to intercept the target within the
+              specified time is calculated. An additional check is added to
+              ensure the required speed doesn't exceed the maximum speed.
+            </p>
+            <pre><code>Required Speed = Distance to Intercept / desiredTimeToIntercept
+Required Speed = Distance to Intercept / timeToIntercept (if desired time isn't specified)</code></pre>
+            <h3>5. Target's Time to Destination Calculation:</h3>
+            <p>
+              The time it takes for the target to reach its destination is
+              computed by dividing the target's course length by its speed. This
+              is important as it ensures that the interception occurs before the
+              target reaches its destination.
+            </p>
+            <pre><code>Time to Destination = targetCourseLength / targetSpeed</code></pre>
+            <p>
+              Remember, trigonometric functions in these formulas (like sin,
+              cos, atan2) require angles in radians, not degrees. In the script,
+              I've utilized helper functions to toggle between degrees and
+              radians as necessary.
+            </p>
+          </div>
+        </div>
+
+        <button class="tablink toTop" onclick="backToTop()">BACK TO TOP</button>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-container">
+        <div class="footer-links">
+          <a
+            href="https://github.com/frazierzak/Intercept-Calculator"
+            target="_blank"
+            >Source</a
+          >
+          <a href="mailto:zakfrazier@gmail.com">Email</a>
+          <a
+            href="https://store.steampowered.com/app/1434950/HighFleet/"
+            target="_blank"
+            >Steam</a
+          >
+        </div>
+        <p>&copy; 2023 Zak Frazier. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="script2.js"></script>
+    <script src="helper2.js"></script>
+  </body>
+</html>
