@@ -1,0 +1,842 @@
+:root {
+  --color-white: #fff;
+  --color-black: #333;
+  --color-grey: #444;
+  --color-light-grey: #555;
+  --color-dark-grey: #666;
+  --color-yellow: #f9f470;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Style to show number pad on mobile devices */
+input[type='number'] {
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+body {
+  font-family: 'Barlow', sans-serif;
+  margin: 0;
+  overflow-y: auto;
+  background-color: var(--color-black);
+  color: var(--color-white);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 500;
+  /* background-image: url(images/bg.jpg); */
+  /* background-size: cover; */
+}
+
+.background {
+  width: 100vw;
+  height: 100vh;
+  position: fixed; /* Fixed position to make it static */
+  top: 0;
+  left: 0;
+  background-image: url('images/bg.png');
+  background-size: cover;
+  background-position: center;
+  /* overflow: hidden; Hide overflowing clouds */
+  z-index: -3;
+}
+
+.scanlines::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.2) 1px,
+    transparent 1px
+  );
+  background-size: 100% 3px; /* Adjust scanline height as needed */
+  z-index: -1;
+}
+
+.clouds {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -2;
+}
+
+.cloud {
+  position: absolute;
+  background-size: cover;
+  animation: moveCloud 60s linear infinite;
+}
+
+@keyframes moveCloud {
+  to {
+    transform: translate(calc(100vw + 50%), calc(-100vh - 86.6%));
+  }
+}
+
+.container {
+  max-width: 700px;
+  margin: 20px auto;
+  background-color: var(--color-grey);
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.form-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.form-wrapper,
+.results-wrapper {
+  width: 49%;
+}
+
+.results-wrapper {
+  border: 1px solid var(--color-dark-grey);
+  background-color: var(--color-light-grey);
+  padding: 20px;
+}
+
+img.logo {
+  width: 100%;
+  max-width: 472px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: var(--color-yellow);
+  font-size: 24px;
+  cursor: default;
+}
+
+#form-container p,
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+form {
+  border: 1px solid var(--color-dark-grey);
+  background-color: var(--color-light-grey);
+  padding: 20px;
+}
+
+.labels-grid,
+.inputs-grid {
+  display: grid;
+  grid-template-columns: 70% 20%;
+  gap: 10%;
+}
+
+.labels-grid .input-wrapper:first-child,
+.inputs-grid > input {
+  justify-self: start;
+}
+.labels-grid .input-wrapper:last-child,
+.inputs-grid .checkbox-container {
+  justify-self: end;
+}
+
+.input-wrapper {
+  margin: 0 0 10px 0;
+}
+
+.icon-and-tooltip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.icon-and-tooltip img {
+  height: 21px;
+}
+
+.icon-and-tooltip i {
+  font-size: 19px;
+  height: 21px;
+  width: auto;
+  vertical-align: middle;
+}
+
+.input-wrapper i,
+.icon-and-tooltip {
+  font-size: 18px;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+.info-icon {
+  height: 21px;
+  width: 21px;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-left: 10px;
+}
+
+label {
+  display: inline-flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-align: left;
+  line-height: 20px;
+}
+
+.tooltip-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  cursor: pointer;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  width: 220px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 10px;
+  position: absolute;
+  z-index: 2;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%); /* Adjust tooltip's own width to center it */
+  font-size: 14px;
+  letter-spacing: 1px;
+  line-height: 20px;
+  border: 2px dashed var(--color-dark-grey);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+input[type='number'],
+form input[type='hidden'] {
+  height: 40px;
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 20px;
+  border: 4px solid var(--color-dark-grey);
+  border-radius: 2px;
+  background-color: var(--color-grey);
+  color: var(--color-white);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 900;
+  font-size: 18px;
+}
+
+input[type='number']:focus {
+  background-color: var(--color-black);
+  border: 4px solid var(--color-yellow);
+  color: var(--color-yellow);
+  outline: none;
+}
+
+.inputs-container > input[type='number'],
+.checkbox-container > input[type='checkbox'] {
+  height: 40px;
+  width: 40px; /* Set the checkbox width to be square */
+  margin-bottom: 20px;
+  border: 4px solid var(--color-dark-grey);
+  border-radius: 2px;
+  background-color: var(--color-grey);
+  color: var(--color-white);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 900;
+  font-size: 18px;
+}
+
+.inputs-container > input[type='number'] {
+  padding: 8px;
+}
+
+.inputs-container > input[type='number']:focus {
+  background-color: var(--color-black);
+  border: 4px solid var(--color-yellow);
+  color: var(--color-yellow);
+  outline: none;
+}
+
+/* Hide the default checkbox */
+.checkbox-container > input[type='checkbox'] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* Style for when checkbox is checked */
+.checkbox-container > input[type='checkbox']:checked {
+  color: var(--color-white); /* Set the color of the checkmark to white */
+  border-color: var(--color-white);
+  position: relative;
+}
+
+/* Style for when checkbox is focused */
+.checkbox-container > input[type='checkbox']:focus-visible {
+  border-color: var(--color-yellow);
+  outline: 0;
+  box-shadow: none;
+}
+
+.checkbox-container > input[type='checkbox']:checked::before {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px; /* Adjust the font-size for the checkmark */
+  font-weight: bold;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.buttons button {
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.submit-button,
+.clear-button {
+  flex: 1;
+  font-size: 24px;
+  border: 3px solid var(--color-grey);
+  border-radius: 2px;
+  padding: 20px;
+  font-weight: 500;
+  text-align: center;
+  position: relative;
+  background: var(--color-grey);
+  font-weight: 900;
+  color: var(--color-yellow);
+  text-decoration: none;
+}
+
+.submit-button:focus-visible,
+.clear-button:focus-visible {
+  outline: 1px solid var(--color-white);
+  border-radius: 2px;
+}
+
+.clear-button {
+  color: var(--color-white);
+}
+
+.submit-button::before,
+.clear-button::before {
+  content: ' ';
+  position: absolute;
+  border: 3px solid var(--color-yellow);
+  border-radius: 2px;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+}
+
+.clear-button::before {
+  border-color: var(--color-white);
+}
+
+.submit-button:hover,
+.clear-button:hover {
+  color: var(--color-black);
+  background-color: var(--color-yellow);
+  border-color: var(--color-yellow);
+}
+
+.clear-button:hover {
+  background-color: var(--color-white);
+  border-color: var(--color-white);
+}
+
+.submit-button:hover::before,
+.clear-button:hover::before {
+  border-color: var(--color-black);
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+#resultsContainer {
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 2px;
+}
+
+#resultsContainer p {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  margin-bottom: 20px;
+  font-size: 14px;
+  line-height: 20px;
+  cursor: default;
+}
+
+#resultsContainer p.warning {
+  color: var(--color-yellow);
+  font-weight: 900;
+  text-align: left;
+  font-size: 24px;
+  line-height: 36px;
+}
+
+#resultsContainer span {
+  font-size: 18px;
+  border: 3px solid var(--color-grey);
+  border-radius: 2px;
+  padding: 20px;
+  font-weight: 500;
+  text-align: center;
+  position: relative;
+  background: var(--color-grey);
+  font-weight: 900;
+  color: var(--color-yellow);
+}
+
+#resultsContainer span:before {
+  content: ' ';
+  position: absolute;
+  border: 3px solid var(--color-yellow);
+  border-radius: 2px;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+}
+
+#resultsContainer p.waiting {
+  font-size: 16px;
+  text-align: center;
+  display: block;
+  letter-spacing: 2px;
+  font-weight: 500;
+  line-height: 22px;
+  background: #333;
+  padding: 20px;
+  border-radius: 4px;
+  animation: fadeAwayAndReturn 1.5s infinite;
+}
+
+@keyframes fadeAwayAndReturn {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* CSS Animation */
+
+#animationContainer {
+  display: block;
+  position: relative;
+  min-height: 200px;
+  width: 100%;
+  height: auto;
+  background-color: var(--color-black);
+  z-index: 1;
+  overflow: hidden;
+  background: url('images/chart_bg.png');
+  border: 2px solid var(--color-black);
+}
+
+#interceptor,
+#target,
+#interceptPoint {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%; /* Makes them circles */
+  z-index: 2;
+}
+
+#interceptor {
+  background-color: rgb(53, 179, 91);
+}
+
+#target {
+  background-color: rgb(162, 28, 28);
+}
+
+#interceptPoint {
+  background-color: var(--color-yellow);
+}
+
+.arrow {
+  position: absolute;
+  width: 2px;
+  height: 10px; /* This is the length of the arrow */
+  top: -5px; /* Half of the arrow's length to center it vertically */
+  left: 50%;
+  transform-origin: center bottom; /* Rotates from the bottom center of the arrow */
+  background-color: black;
+}
+
+#lineContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.blueLine {
+  stroke: #484848;
+}
+
+.redLine {
+  stroke: var(--color-yellow);
+}
+
+.greenLine {
+  stroke: rgb(190, 72, 72);
+}
+
+.interceptorAngleText,
+.distanceText {
+  fill: #1b1b1b;
+  cursor: default;
+}
+
+/* Old chart code */
+#interceptChartContainer {
+  border: 3px dashed var(--color-white);
+  background-color: var(--color-grey);
+  position: relative;
+  width: 100%;
+}
+
+#interceptChartContainer::before {
+  display: block;
+  content: '';
+  padding-top: 100%;
+}
+
+#interceptChartContainer canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+}
+
+.bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: 100% 100%;
+  background-position: center;
+  transition: opacity 1s ease;
+  z-index: 1; /* Images are at level 1 */
+}
+
+#initialImage {
+  background-image: url('images/chart_bg_pre.png');
+  opacity: 1;
+  animation: fadeAwayAndReturn 1.5s infinite;
+}
+
+#finalImage {
+  background-image: url('images/chart_bg.png');
+  opacity: 0;
+}
+
+#interceptChartContainer.loaded {
+  border: 3px solid var(--color-white);
+}
+
+#interceptChartContainer.loaded #finalImage {
+  opacity: 1;
+}
+
+#interceptChartContainer.loaded #initialImage {
+  opacity: 0;
+}
+
+#interceptChart {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+.desc {
+  text-align: left;
+}
+
+.desc p,
+.desc li {
+  margin-bottom: 12px;
+  font-size: 14px;
+  line-height: 20px;
+  text-transform: none;
+}
+
+.desc h3 {
+  margin: 0 0 12px 0;
+}
+
+.desc p a {
+  color: var(--color-yellow);
+  text-decoration: none;
+  font-weight: 900;
+}
+
+.desc p a:hover {
+  text-decoration: underline;
+}
+
+.desc ol {
+  padding: 0 20px;
+}
+
+#howToUse {
+  margin-bottom: 20px;
+}
+
+#mathContainer h3,
+#mathContainer h4 {
+  font-size: 16px;
+  margin-bottom: 12px;
+  text-transform: none;
+}
+
+#mathContainer pre {
+  font-size: 12px;
+  background-color: var(--color-black);
+  border-radius: 5px;
+  font-family: 'Courier New', Courier, monospace;
+  line-height: 1.5;
+  overflow-x: auto;
+  margin-bottom: 20px;
+  padding: 5px 10px;
+}
+
+#mathContainer p code {
+  padding: 2px;
+  background-color: var(--color-black);
+  letter-spacing: 0;
+  font-weight: bold;
+}
+
+footer {
+  background-color: var(--color-black);
+  color: var(--color-white);
+  padding: 20px;
+  max-width: 700px;
+  margin: 0 auto 20px;
+  border-radius: 5px;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-links a {
+  color: var(--color-white);
+  text-decoration: none;
+  margin-right: 20px;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+}
+
+.tablink {
+  flex: 1;
+  font-size: 18px;
+  border: 3px solid var(--color-grey);
+  border-radius: 2px;
+  padding: 20px;
+  font-weight: 500;
+  text-align: center;
+  position: relative;
+  background: var(--color-grey);
+  font-weight: 900;
+  color: var(--color-white);
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.tablink.toTop {
+  display: block;
+  margin: 0 auto;
+}
+
+.tablink::before {
+  content: ' ';
+  position: absolute;
+  border: 3px solid var(--color-white);
+  border-radius: 2px;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+}
+
+.tablink:hover {
+  color: var(--color-black);
+  background-color: var(--color-white);
+  border-color: var(--color-white);
+}
+
+.tablink:hover::before {
+  border-color: var(--color-black);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+  animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .form-container {
+    flex-direction: column;
+  }
+
+  .form-wrapper,
+  .results-wrapper {
+    width: 100%;
+  }
+
+  body {
+    margin: 10px;
+  }
+
+  .container {
+    margin: 0 auto 10px auto;
+    padding: 10px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  label {
+    font-size: 16px;
+  }
+
+  input[type='number'],
+  form input[type='hidden'] {
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+
+  .optional {
+    margin-bottom: 10px;
+  }
+
+  .submit-button,
+  .clear-button {
+    font-size: 20px;
+    padding: 10px;
+  }
+
+  #resultsContainer {
+    font-size: 16px;
+  }
+
+  #resultsContainer p {
+    font-size: 14px;
+  }
+
+  #resultsContainer span {
+    font-size: 16px;
+    padding: 15px;
+  }
+
+  .desc p,
+  .desc li {
+    line-height: 24px;
+  }
+
+  footer {
+    padding: 10px;
+  }
+}
